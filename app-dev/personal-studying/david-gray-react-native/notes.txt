@@ -1,0 +1,13 @@
+# Creating a react native project
+npx create-expo-app@latest
+
+# Installing package.json dependencies
+npm install
+
+# Start the development server
+npx expo start
+
+# Different ways to run react native project
+npm run android
+npm run ios
+npm run web
