@@ -1,11 +1,16 @@
 # Creating a react native project
 npx create-expo-app@latest
+npx create-expo-app CoffeeApp
 
 # Installing package.json dependencies
 npm install
 
 # Start the development server
 npx expo start
+
+# View web and refresh
+w - start web view
+r - refresh project
 
 # Different ways to run react native project
 npm run android
