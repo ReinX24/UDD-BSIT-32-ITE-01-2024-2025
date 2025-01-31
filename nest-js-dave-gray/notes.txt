@@ -23,3 +23,21 @@ npm i @nestjs/mapped-types -D
 
 # Installing validators and transformers
 npm i class-validator class-transformer
+
+# Installing and initializing prisma
+npm i prisma -D
+npx prisma init
+
+# Migrating our models in our schema.prisma file
+npx prisma migrate dev --name init
+
+# Applying changes to our model
+npx prisma generate 
+npx prisma migrate dev --name name_changed
+
+# Creating a module and service for our database
+nest g module database
+nest g service database
+
+# Create a rest api using a nest command
+nest g resource employees
