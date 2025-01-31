@@ -1,0 +1,19 @@
+# Creating a new nest js project
+npm i -g @nestjs/cli
+new new nest-rest-api
+
+# Start nest project
+npm run start
+npm run start:dev
+
+# Go to endpoint
+localhost:3000/
+
+# Creating a new module
+nest g module users
+
+# Creating a controller
+nest g controller users
+
+# Creating a service provider
+nest g service users
