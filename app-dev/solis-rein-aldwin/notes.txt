@@ -1,0 +1,8 @@
+# Creating a blank template on current directory
+npx create-expo-app ./ -t blank
+
+# Installing dependencies
+npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+
+# Start and clear cache
+npx expo start -c
