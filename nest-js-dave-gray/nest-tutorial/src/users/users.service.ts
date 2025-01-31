@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 
 @Injectable()
 export class UsersService {
@@ -50,25 +52,46 @@ export class UsersService {
     findOne(id: number) {
         // Find the user by their id
         const user = this.users.find((user) => {
-            user.id === id;
+            return user.id === id;
         })
 
         return user;
     }
 
-    create(user: {
-        name: string, email: string,
-        role: "INTERN" | "ENGINEER" | "ADMIN"
-    }) {
-
+    create(createUserDto: CreateUserDto) {
         // Copy new array and sort from highest to lowest ids, mimics id in db
-        // TODO: research sort function
         const usersByHighestId = [...this.users].sort((a, b) => b.id - a.id)
 
-        // TODO: cont @44:50
         const newUser = {
             id: usersByHighestId[0].id + 1,
-            ...user
+            ...createUserDto
         }
+
+        this.users.push(newUser);
+        return newUser;
+    }
+
+    update(id: number, updateUserDto: UpdateUserDto) {
+        this.users = this.users.map((eachUser) => {
+            if (eachUser.id === id) {
+                // Updating the information of the user, replacing old data 
+                // with new data
+                return { ...eachUser, ...updateUserDto }
+            }
+            return eachUser;
+        })
+
+        return this.findOne(id)
+    }
+
+    delete(id: number) {
+        const removedUser = this.findOne(id)
+
+        this.users = this.users.filter((eachUser) => {
+            // Returns all users except for the one which matches the id
+            return eachUser.id !== id
+        })
+
+        return removedUser;
     }
 }

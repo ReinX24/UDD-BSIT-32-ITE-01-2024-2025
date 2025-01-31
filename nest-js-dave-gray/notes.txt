@@ -17,3 +17,9 @@ nest g controller users
 
 # Creating a service provider
 nest g service users
+
+# Installing mapped types as a dev dependency
+npm i @nestjs/mapped-types -D
+
+# Installing validators and transformers
+npm i class-validator class-transformer
