@@ -4,48 +4,50 @@ import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private readonly databaseService: DatabaseService) { }
+	// Creating a databaseService object for our employees service
+	constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createEmployeeDto: Prisma.EmployeeCreateInput) {
-    return this.databaseService.employee.create({
-      data: createEmployeeDto,
-    });
-  }
+	// These functions need to be async because they are awaiting for the db connection
+	async create(createEmployeeDto: Prisma.EmployeeCreateInput) {
+		return this.databaseService.employee.create({
+			data: createEmployeeDto,
+		});
+	}
 
-  async findAll(role?: "INTERN" | "ENGINEER" | "ADMIN") {
-    if (role) {
-      return this.databaseService.employee.findMany({
-        where: {
-          role: role,
-        }
-      });
-    }
+	async findAll(role?: "INTERN" | "ENGINEER" | "ADMIN") {
+		if (role) {
+			return this.databaseService.employee.findMany({
+				where: {
+					role: role,
+				}
+			});
+		}
 
-    return this.databaseService.employee.findMany();
-  }
+		return this.databaseService.employee.findMany();
+	}
 
-  async findOne(id: number) {
-    return this.databaseService.employee.findUnique({
-      where: {
-        id: id,
-      }
-    });
-  }
+	async findOne(id: number) {
+		return this.databaseService.employee.findUnique({
+			where: {
+				id: id,
+			}
+		});
+	}
 
-  async update(id: number, updateEmployeeDto: Prisma.EmployeeUpdateInput) {
-    return this.databaseService.employee.update({
-      where: {
-        id: id
-      },
-      data: updateEmployeeDto
-    })
-  }
+	async update(id: number, updateEmployeeDto: Prisma.EmployeeUpdateInput) {
+		return this.databaseService.employee.update({
+			where: {
+				id: id
+			},
+			data: updateEmployeeDto
+		})
+	}
 
-  async remove(id: number) {
-    return this.databaseService.employee.delete({
-      where: {
-        id: id,
-      }
-    });
-  }
+	async remove(id: number) {
+		return this.databaseService.employee.delete({
+			where: {
+				id: id,
+			}
+		});
+	}
 }

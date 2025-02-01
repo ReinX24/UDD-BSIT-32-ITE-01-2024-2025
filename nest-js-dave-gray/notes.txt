@@ -41,3 +41,10 @@ nest g service database
 
 # Create a rest api using a nest command
 nest g resource employees
+
+# Adding the nestjs throttler package for rate limiting
+npm i --save @nestjs/throttler
+
+# Creating our own logger
+nest g module my-logger
+nest g service my-logger
