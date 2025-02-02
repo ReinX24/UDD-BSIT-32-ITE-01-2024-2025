@@ -1,0 +1,18 @@
+# Starting nestjs with yarn
+yarn start
+yarn start:dev
+
+# Creating modules
+nest g module user
+nest g module bookmark
+
+# Starting docker container which hosts our postgres db
+docker compose up dev-db -d # run in the background
+docker compose up dev-db
+
+# Installing prisma
+yarn add -D prisma@latest
+yarn add @prisma/client
+
+# Initializing prisma db
+npx prisma init
