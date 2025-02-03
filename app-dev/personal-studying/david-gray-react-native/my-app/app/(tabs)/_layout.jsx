@@ -8,6 +8,8 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 export default function TabLayout() {
     const colorScheme = useColorScheme();
 
@@ -16,8 +18,8 @@ export default function TabLayout() {
             screenOptions={{
                 tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
                 tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tint,
-                headerShown: true,
-                headerTitleAlign: "center",
+                headerShown: false,
+                // headerTitleAlign: "center",
                 tabBarButton: HapticTab,
                 tabBarBackground: TabBarBackground,
                 tabBarStyle: Platform.select({
@@ -33,19 +35,29 @@ export default function TabLayout() {
                 name="index"
                 options={{
                     title: "Home",
-                    tabBarIcon: ({ color }) => (
-                        <IconSymbol size={28} name="house.fill" color={color} />
+                    tabBarIcon: ({ color, focused }) => (
+                        // <IconSymbol size={28} name="house.fill" color={color} />
+                        <Ionicons
+                            name={focused ? "home" : "home-outline"}
+                            size={28}
+                            color={color}
+                        />
                     ),
                 }}
             />
             <Tabs.Screen
                 name="contact"
                 options={{
-                    title: "Contact",
-                    tabBarIcon: ({ color }) => (
-                        <IconSymbol
-                            size={28}
-                            name="paperplane.fill"
+                    title: "Contact Us",
+                    tabBarIcon: ({ color, focused }) => (
+                        // <IconSymbol
+                        //     size={28}
+                        //     name={focused ? "people.fill" : "people.outline"}
+                        //     color={color}
+                        // />
+                        <Ionicons
+                            name={focused ? "people" : "people-outline"}
+                            size={24}
                             color={color}
                         />
                     ),
