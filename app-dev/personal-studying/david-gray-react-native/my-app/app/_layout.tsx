@@ -36,8 +36,8 @@ export default function RootLayout() {
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
             <Stack>
-                {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
-                <Stack.Screen name="(coffee)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                {/* <Stack.Screen name="(coffee)" options={{ headerShown: false }} /> */}
                 {/* <Stack.Screen
                     name="index"
                     options={{ title: "Home", headerShown: false }}
