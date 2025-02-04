@@ -1,0 +1,8 @@
+# Remove template code
+npm run reset-project
+
+# Installing expo-image library
+npx expo install expo-image
+
+# Installing expo-image-picker
+npx expo install expo-image-picker
