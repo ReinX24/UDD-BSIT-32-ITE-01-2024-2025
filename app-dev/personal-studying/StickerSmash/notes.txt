@@ -1,3 +1,6 @@
+# Start the development server
+npx expo start
+
 # Remove template code
 npm run reset-project
 
