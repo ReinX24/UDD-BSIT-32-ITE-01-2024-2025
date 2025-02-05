@@ -9,3 +9,5 @@ npx expo install expo-image
 
 # Installing expo-image-picker
 npx expo install expo-image-picker
+
+# Installing libraries for making screenshots
