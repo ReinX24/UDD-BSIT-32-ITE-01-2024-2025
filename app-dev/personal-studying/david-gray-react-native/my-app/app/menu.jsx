@@ -23,8 +23,10 @@ export default function MenuScreen() {
 
     const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
 
-    // TODO: continue @1:47:45
-    const separatorComponent = <View></View>
+    const separatorComponent = <View style={styles.separator}></View>;
+
+    // const headerComponent = <Text>Top of List</Text>;
+    const footerComponent = <Text>End of Menu</Text>;
 
     return (
         <Container>
@@ -35,14 +37,30 @@ export default function MenuScreen() {
                 }}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.contentContainer}
-                // ItemSeparatorComponent={}
+                ItemSeparatorComponent={separatorComponent}
+                // ListHeaderComponent={headerComponent}
+                ListFooterComponent={footerComponent}
+                ListFooterComponentStyle={styles.footerComponent}
+                ListEmptyComponent={<Text>No items</Text>}
                 renderItem={({ item }) => (
-                    <View>
-                        <View>
-                            <Text>{item.title}</Text>
-                            <Text>{item.description}</Text>
+                    <View style={styles.row}>
+                        <View style={styles.menuTextRow}>
+                            <Text
+                                style={[
+                                    styles.menuItemTitle,
+                                    styles.menuItemText,
+                                ]}
+                            >
+                                {item.title}
+                            </Text>
+                            <Text style={styles.menuItemText}>
+                                {item.description}
+                            </Text>
                         </View>
-                        <Image source={MENU_IMAGES[item.id - 1]} />
+                        <Image
+                            source={MENU_IMAGES[item.id - 1]}
+                            style={styles.menuImage}
+                        />
                     </View>
                 )}
             ></FlatList>
@@ -57,6 +75,44 @@ function createStyles(theme, colorScheme) {
             paddingBottom: 20,
             paddingBottom: 12,
             backgroundColor: theme.background,
+        },
+        separator: {
+            height: 1,
+            backgroundColor: colorScheme === "dark" ? "papayawhip" : "#000",
+            width: "50%",
+            maxWidth: "300",
+            marginHorizontal: "auto",
+            marginBottom: 10,
+        },
+        footerComponent: {
+            marginHorizontal: "auto",
+        },
+        row: {
+            flexDirection: "row",
+            width: "100%",
+            maxWidth: 600,
+            height: 100,
+            marginBottom: 10,
+            borderStyle: "solid",
+            borderColor: colorScheme === "dark" ? "papayawhip" : "#000",
+            borderWidth: 1,
+            borderRadius: 20,
+            overflow: "hidden",
+            marginHorizontal: "auto",
+        },
+        menuTextRow: {
+            width: "65%",
+            paddingTop: 10,
+            paddingLeft: 10,
+            paddingRight: 5,
+            flexGrow: 1, // take up available space
+        },
+        menuItemTitle: {
+            fontSize: 18,
+            textDecorationLine: "underline",
+        },
+        menuItemText: {
+            color: theme.text,
         },
     });
 }
