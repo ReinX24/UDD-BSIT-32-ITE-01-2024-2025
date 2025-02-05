@@ -26,7 +26,9 @@ export default function MenuScreen() {
     const separatorComponent = <View style={styles.separator}></View>;
 
     // const headerComponent = <Text>Top of List</Text>;
-    const footerComponent = <Text>End of Menu</Text>;
+    const footerComponent = (
+        <Text style={{ color: theme.text }}>End of Menu</Text>
+    );
 
     return (
         <Container>
@@ -73,7 +75,7 @@ function createStyles(theme, colorScheme) {
         contentContainer: {
             paddingTop: 10,
             paddingBottom: 20,
-            paddingBottom: 12,
+            paddingHorizontal: 12,
             backgroundColor: theme.background,
         },
         separator: {
@@ -113,6 +115,10 @@ function createStyles(theme, colorScheme) {
         },
         menuItemText: {
             color: theme.text,
+        },
+        menuImage: {
+            width: 100,
+            height: 100,
         },
     });
 }
