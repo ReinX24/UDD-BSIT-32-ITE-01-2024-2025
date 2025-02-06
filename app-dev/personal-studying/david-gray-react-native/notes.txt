@@ -16,3 +16,7 @@ r - refresh project
 npm run android
 npm run ios
 npm run web
+
+# Remove example project initial files
+npm run reset-project
+rm -rf app-example
