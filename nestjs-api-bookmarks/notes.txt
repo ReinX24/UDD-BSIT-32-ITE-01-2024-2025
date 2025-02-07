@@ -16,3 +16,18 @@ yarn add @prisma/client
 
 # Initializing prisma db
 npx prisma init
+
+# Applying migrations
+npx prisma migrate dev
+
+# Generating types for our prisma database models
+npx prisma generate
+
+# Inspecting our database using prisma
+npx prisma studio
+
+# Creating a module for our prisma postgres database
+nest g module prisma
+
+# Creating prisma service without tests
+nest g service prisma --no-spec 
