@@ -17,10 +17,15 @@ function App() {
         <View style={styles.container}>
             <Text style={styles.title}>Rein Aldwin E. Solis</Text>
             <Text>32 - ITE - 01</Text>
-
-            <Link href="/about">About</Link>
             <StatusBar style="auto" />
-            <Counter></Counter>
+
+            <Link href="/profile" style={{ color: "blue" }}>
+                Go to Profile
+            </Link>
+
+            <Link href="/task" style={{ color: "blue" }}>
+                Go to Todo List
+            </Link>
         </View>
     );
 }
@@ -64,5 +69,8 @@ const styles = StyleSheet.create({
         fontSize: 42,
         fontWeight: "bold",
         textAlign: "center",
+
+        // borderWidth: 4,
+        // borderColor: "#000000",
     },
 });
