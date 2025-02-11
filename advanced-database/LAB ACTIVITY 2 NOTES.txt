@@ -1,0 +1,48 @@
+CREATE TABLE e_products(
+	product_id INT PRIMARY KEY,
+	product_name VARCHAR(100),
+	category VARCHAR(50),
+	unit_price DECIMAL(10, 2)	
+);
+
+INSERT INTO 
+	e_products(product_id, product_name, category, unit_price) 
+VALUES 
+	(101, 'Laptop', 'Electronics', 500.00),
+	(102, 'Smartphone', 'Electronics', 300.00),
+	(103, 'Headphones', 'Electronics', 30.00),
+	(104, 'Keyboard', 'Electronics', 20.00),
+	(105, 'Mouse', 'Electronics', 15.00);
+
+CREATE TABLE sales (
+	sale_id INT PRIMARY KEY,
+	product_id INT,
+	quantity_sold INT,
+	sale_date DATE,
+	total_price DECIMAL(10, 2)
+);
+
+INSERT INTO
+	sales(sale_id, product_id, quantity_sold, sale_date, total_price)
+VALUES
+	(1, 101, 5, '2024-01-01', 2500.00),
+	(2, 102, 3, '2024-01-02', 900.00),
+	(3, 103, 2, '2024-01-02', 60.00),
+	(4, 104, 4, '2024-01-03', 80.00),
+	(5, 105, 6, '2024-01-03', 90.00);
+
+1. DESC sales; or SELECT column_name FROM information_schema.columns WHERE table_name='sales';
+2. SELECT product_name, unit_price FROM e_products;
+3. SELECT sale_id, sale_date FROM sales;
+4. SELECT * FROM sales WHERE total_price > 100;
+5. SELECT * FROM e_products WHERE category = 'Electronics';
+6. SELECT sale_id, total_price FROM sales WHERE sale_date = '2024-01-03';
+7. SELECT SUM(total_price) as total_revenue FROM sales;
+8. SELECT AVG(unit_price) as average_unit_price FROM e_products;
+9. SELECT SUM(quantity_sold) as total_quantity_sold FROM sales;
+10. SELECT sale_date, COUNT(*) as sale_count FROM sales GROUP BY sale_date;
+11. SELECT product_name, unit_price FROM e_products ORDER BY unit_price DESC LIMIT 1;
+12. SELECT ROUND(AVG(total_price), 2) as total_price_sales FROM sales;
+13. SELECT AVG(total_price) as average_total_price FROM sales;
+14. SELECT sale_id, DATE_FORMAT(sale_date, '%Y-%m-%d') as sale_date FROM sales;
+15. SELECT product_name, unit_price FROM e_products WHERE unit_price BETWEEN 20 AND 600;
