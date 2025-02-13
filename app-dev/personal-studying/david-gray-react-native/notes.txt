@@ -20,3 +20,6 @@ npm run web
 # Remove example project initial files
 npm run reset-project
 rm -rf app-example
+
+# Installing google font
+npm i @expo-google-fonts/inter
