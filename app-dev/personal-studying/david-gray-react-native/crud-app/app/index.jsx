@@ -7,11 +7,16 @@ import {
     FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { ThemeContext } from "@/context/ThemeContext";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
+
+import Animated, { LinearTransition } from "react-native-reanimated";
+
+import Octicons from "@expo/vector-icons/Octicons";
 
 // Importing the data from a js file
 import { data } from "@/data/todos";
@@ -20,7 +25,7 @@ export default function Index() {
     // Reversing the order of the data in our file
     const [todos, setTodos] = useState(data.sort((a, b) => b.id - a.id));
     const [text, setText] = useState("");
-
+    const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
     const [loaded, error] = useFonts({
         Inter_500Medium,
     });
@@ -28,6 +33,9 @@ export default function Index() {
     if (!loaded && !error) {
         return null;
     }
+
+    // Initializing our styles
+    const styles = createStyles(theme, colorScheme);
 
     const addTodo = () => {
         // Get the text from the text input
@@ -99,73 +107,105 @@ export default function Index() {
                 <Pressable onPress={addTodo} style={styles.addButton}>
                     <Text style={styles.addButtonText}>Add</Text>
                 </Pressable>
+                <Pressable
+                    onPress={() =>
+                        setColorScheme(
+                            colorScheme === "light" ? "dark" : "light"
+                        )
+                    }
+                    style={{ marginLeft: 10 }}
+                >
+                    {colorScheme === "dark" ? (
+                        <Octicons
+                            name="moon"
+                            size={36}
+                            color={theme.text}
+                            selectable={undefined}
+                            style={{ width: 36 }}
+                        ></Octicons>
+                    ) : (
+                        <Octicons
+                            name="sun"
+                            size={36}
+                            color={theme.text}
+                            selectable={undefined}
+                            style={{ width: 36 }}
+                        ></Octicons>
+                    )}
+                </Pressable>
             </View>
-            <FlatList
+            <Animated.FlatList
                 data={todos}
                 renderItem={renderItem}
                 keyExtractor={(todo) => todo.id}
                 contentContainerStyle={{ flexGrow: 1 }}
+                itemLayoutAnimation={LinearTransition}
+                keyboardDismissMode="on-drag"
             />
         </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // width: "100%",
-        backgroundColor: "#494D5F",
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 10,
-        padding: 10,
-        width: "100%",
-        maxWidth: 1024,
-        marginHorizontal: "auto",
-        pointerEvents: "auto",
-    },
-    input: {
-        flex: 1,
-        borderColor: "gray",
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 10,
-        marginRight: 10,
-        fontSize: 18,
-        minWidth: 0,
-        color: "#EDF7F6",
-    },
-    addButton: {
-        backgroundColor: "#EDF7F6",
-        borderRadius: 10,
-        padding: 10,
-    },
-    addButtonText: {
-        fontSize: 18,
-        color: "#494D5F",
-    },
-    todoItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 4,
-        padding: 10,
-        borderBottomColor: "gray",
-        borderBottomWidth: 1,
-        width: "100%",
-        maxWidth: 1024,
-        marginHorizontal: "auto",
-        pointerEvents: "auto",
-    },
-    todoText: {
-        flex: 1,
-        fontSize: 18,
-        color: "#EDF7F6",
-    },
-    completedText: {
-        textDecorationLine: "line-through",
-        color: "gray",
-    },
-});
+function createStyles(theme, colorScheme) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            // width: "100%",
+            backgroundColor: theme.background,
+        },
+        inputContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 10,
+            padding: 10,
+            width: "100%",
+            maxWidth: 1024,
+            marginHorizontal: "auto",
+            pointerEvents: "auto",
+        },
+        input: {
+            flex: 1,
+            borderColor: "gray",
+            borderWidth: 1,
+            borderRadius: 10,
+            padding: 10,
+            marginRight: 10,
+            fontSize: 18,
+            fontFamily: "Inter_500Medium",
+            minWidth: 0,
+            color: theme.text,
+        },
+        addButton: {
+            backgroundColor: theme.button,
+            borderRadius: 10,
+            padding: 10,
+        },
+        addButtonText: {
+            fontSize: 18,
+            color: colorScheme === "dark" ? "black" : "white",
+        },
+        todoItem: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 4,
+            padding: 10,
+            borderBottomColor: "gray",
+            borderBottomWidth: 1,
+            width: "100%",
+            maxWidth: 1024,
+            marginHorizontal: "auto",
+            pointerEvents: "auto",
+        },
+        todoText: {
+            flex: 1,
+            fontSize: 18,
+            fontFamily: "Inter_500Medium",
+            color: theme.text,
+        },
+        completedText: {
+            textDecorationLine: "line-through",
+            color: "gray",
+        },
+    });
+}
