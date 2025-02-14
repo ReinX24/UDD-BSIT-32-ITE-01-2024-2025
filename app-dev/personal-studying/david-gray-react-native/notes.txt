@@ -23,3 +23,6 @@ rm -rf app-example
 
 # Installing google font
 npm i @expo-google-fonts/inter
+
+# Installing react native async storage
+npx expo install @react-native-async-storage/async-storage

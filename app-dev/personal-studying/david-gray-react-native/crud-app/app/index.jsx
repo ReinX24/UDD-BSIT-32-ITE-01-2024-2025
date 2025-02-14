@@ -7,7 +7,7 @@ import {
     FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -15,6 +15,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 
 import Animated, { LinearTransition } from "react-native-reanimated";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Octicons from "@expo/vector-icons/Octicons";
 
@@ -29,6 +31,9 @@ export default function Index() {
     const [loaded, error] = useFonts({
         Inter_500Medium,
     });
+
+    // useEffect should be before fonts are loaded
+    useEffect(() => {});
 
     if (!loaded && !error) {
         return null;
