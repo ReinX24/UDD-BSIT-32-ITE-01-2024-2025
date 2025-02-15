@@ -18,6 +18,8 @@ import Animated, { LinearTransition } from "react-native-reanimated";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { StatusBar } from "expo-status-bar";
+
 import Octicons from "@expo/vector-icons/Octicons";
 
 // Importing the data from a js file
@@ -25,7 +27,7 @@ import { data } from "@/data/todos";
 
 export default function Index() {
     // Reversing the order of the data in our file
-    const [todos, setTodos] = useState(data.sort((a, b) => b.id - a.id));
+    const [todos, setTodos] = useState([]);
     const [text, setText] = useState("");
     const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
     const [loaded, error] = useFonts({
@@ -33,7 +35,45 @@ export default function Index() {
     });
 
     // useEffect should be before fonts are loaded
-    useEffect(() => {});
+    // Getting our data
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Getting the stored json value in our local storage
+                const jsonValue = await AsyncStorage.getItem("TodoApp");
+
+                // Parsing our json value or returning null
+                const storageTodos =
+                    jsonValue != null ? JSON.parse(jsonValue) : null;
+
+                if (storageTodos && storageTodos.length) {
+                    // Setting the todos to stored todos
+                    setTodos(storageTodos.sort((a, b) => b.id - a.id));
+                } else {
+                    // If no todos are stored, get data from data/todos
+                    setTodos(data.sort((a, b) => b.id - a.id));
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        fetchData();
+    }, [data]);
+
+    // Storing and updating data
+    useEffect(() => {
+        const storeData = async () => {
+            try {
+                const jsonValue = JSON.stringify(todos);
+                await AsyncStorage.setItem("TodoApp", jsonValue);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        storeData();
+    }, [todos]);
 
     if (!loaded && !error) {
         return null;
@@ -101,6 +141,7 @@ export default function Index() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.input}
