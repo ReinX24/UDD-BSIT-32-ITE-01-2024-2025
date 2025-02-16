@@ -20,6 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { StatusBar } from "expo-status-bar";
 
+import { useRouter } from "expo-router";
+
 import Octicons from "@expo/vector-icons/Octicons";
 
 // Importing the data from a js file
@@ -30,6 +32,7 @@ export default function Index() {
     const [todos, setTodos] = useState([]);
     const [text, setText] = useState("");
     const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
+    const router = useRouter();
     const [loaded, error] = useFonts({
         Inter_500Medium,
     });
@@ -114,19 +117,27 @@ export default function Index() {
         );
     };
 
+    const handlePress = (id) => {
+        router.push(`/todos/${id}`);
+    };
+
     const renderItem = ({ item }) => {
         return (
             <View style={styles.todoItem}>
-                <Text
-                    // Applying multiple styles
-                    style={[
-                        styles.todoText,
-                        item.completed && styles.completedText,
-                    ]}
-                    onPress={() => toggleTodo(item.id)}
+                <Pressable
+                    onPress={() => handlePress(item.id)}
+                    onLongPress={() => toggleTodo(item.id)}
                 >
-                    {item.title}
-                </Text>
+                    <Text
+                        // Applying multiple styles
+                        style={[
+                            styles.todoText,
+                            item.completed && styles.completedText,
+                        ]}
+                    >
+                        {item.title}
+                    </Text>
+                </Pressable>
                 <Pressable onPress={() => removeTodo(item.id)}>
                     <MaterialCommunityIcons
                         name="delete-circle"
