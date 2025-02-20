@@ -28,6 +28,14 @@ function Basic() {
                 style={styles.image}
                 source={require("../assets/images/favicon.png")}
             ></Image>
+            <Image
+                style={styles.image}
+                source={require("../assets/images/favicon.png")}
+            ></Image>
+            <Image
+                style={styles.image}
+                source={require("../assets/images/favicon.png")}
+            ></Image>
 
             {/* Button Component */}
             <Button
