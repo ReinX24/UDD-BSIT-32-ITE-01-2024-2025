@@ -1,14 +1,19 @@
 import Basic from "@/components/Basic";
 import ScrollViewComponent from "@/components/ScrollView";
 import TextInputComponent from "@/components/TextInput";
+import Styling from "@/components/Styling";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
 function App() {
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            {/* <Basic /> */}
+        <ScrollView
+            nestedScrollEnabled={true}
+            contentContainerStyle={styles.scrollViewContent}
+        >
+            <Basic />
             <TextInputComponent />
             <ScrollViewComponent />
+            <Styling />
         </ScrollView>
     );
 }

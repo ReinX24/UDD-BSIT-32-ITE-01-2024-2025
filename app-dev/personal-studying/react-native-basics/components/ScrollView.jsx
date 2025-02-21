@@ -6,10 +6,18 @@ function ScrollViewComponent() {
             <Text style={styles.headerText}>Scroll View Component</Text>
             <ScrollView
                 style={styles.scrollView}
+                nestedScrollEnabled={true}
                 contentContainerStyle={styles.scrollViewContent}
+                showsVerticalScrollIndicator={true}
                 bounces={true}
             >
-                {...Array(20).map((_, index) => {})}
+                {[...Array(20)].map((_, index) => {
+                    return (
+                        <View key={index} style={styles.box}>
+                            <Text style={styles.boxText}>{index + 1}</Text>
+                        </View>
+                    );
+                })}
             </ScrollView>
         </View>
     );
@@ -35,6 +43,17 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         padding: 20,
+    },
+    box: {
+        height: 40,
+        marginBottom: 10,
+        backgroundColor: "#3498db",
+        justifyContent: "center",
+        alignContent: "center",
+    },
+    boxText: {
+        color: "#ffffff",
+        fontWeight: "bold",
     },
 });
 
