@@ -1,4 +1,5 @@
 import Basic from "@/components/Basic";
+import ScrollViewComponent from "@/components/ScrollView";
 import TextInputComponent from "@/components/TextInput";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
@@ -7,6 +8,7 @@ function App() {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
             {/* <Basic /> */}
             <TextInputComponent />
+            <ScrollViewComponent />
         </ScrollView>
     );
 }
@@ -20,5 +22,7 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         padding: 8,
+        // borderColor: "gray",
+        // borderWidth: 4,
     },
 });
