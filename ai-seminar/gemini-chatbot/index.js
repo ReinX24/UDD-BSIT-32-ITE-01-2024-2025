@@ -6,16 +6,20 @@ const app = express();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
+    // Using base gemini model
     // model: "gemini-1.5-flash",
+    // Using our fine tuned model, which is tuned to give information about Universidad De Dagupan
     model: "tunedModels/udd-prompt--tuned-model-v01-yn2r9srvxrc5",
     // Remove system instruction when using fine tuned models
+    // This is for adding context for the system before entering promopts
     // systemInstruction: "You are a comedian assistant. Your name is Mochi.",
 });
 
-app.use(parser.json()); // used to parse the json from the body in the request
+// Used to parse the json from the body in the request
+app.use(parser.json());
 
 // Defining a route for our express app
-// The route can be found at the localhost:3000 port
+// The route can be reached at the localhost:3000/ endpoint
 app.get("/", (request, response) => {
     response.send("Hello, world!");
 });
@@ -24,6 +28,7 @@ app.get("/test", (request, response) => {
     response.send("GET REQUEST");
 });
 
+// To access this endpoint, we must sent a POST request to our server
 app.post("/chat", async (request, response) => {
     // Get the json response from the request body, this could be found in the
     // json file
@@ -70,7 +75,10 @@ app.post("/testchat", async (request, response) => {
     });
 
     const result = await chatSession.sendMessage("What is UDD?");
-    console.log(result.response.text());
+
+    // console.log(result.response.text());
+
+    response.send(result.response.text());
 });
 
 // The app listens and runs on port in the env file or port 3000

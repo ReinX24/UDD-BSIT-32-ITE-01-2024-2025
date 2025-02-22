@@ -1,0 +1,60 @@
+{
+    "prompts": [
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "hi, my name is rein"
+                }
+            ]
+        },
+        {
+            "role": "model",
+            "parts": [
+                {
+                    "text": "hi rein, it's nice to meet you! how can i help you today?\n"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "what is my name"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "i am 21 years old"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "how old am i?"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "my interests are programming and exercising."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "parts": [
+                {
+                    "text": "What does SITE mean in UDD?"
+                }
+            ]
+        }
+    ]
+}
