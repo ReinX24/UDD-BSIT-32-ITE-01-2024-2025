@@ -1,0 +1,64 @@
+# Installing node packages to be used
+npm init
+npm install express
+npm install @google/generative-ai
+npm install
+
+# Installing NVS
+winget install jasongin.nvs
+nvs add 22
+nvs use 22
+nvs add 23.8
+nvs use 23
+
+# Installing express js
+npm install express
+
+# Run application
+node index.js
+
+# Run application and apply changes automatically
+node --watch index.js
+node --env-file=.env --watch index.js 
+
+# Installing npm package for parsing data
+npm install body-parser
+
+# For generate response
+{
+    "prompt": "Hello"
+}
+
+# For continuous conversation
+{
+    "prompts": [
+        {
+            "role": "user",
+            "parts": [{ "text": "Hi, my name is Rein" }]
+        },
+        {
+            "role": "model",
+            "parts": [{ "text": "Hi Rein, it's nice to meet you!  How can I help you today?\n" }]
+        },
+        {
+            "role": "user",
+            "parts": [{ "text": "What is my name" }]
+        },
+        {
+            "role": "user",
+            "parts": [{ "text": "I am 21 years old" }]
+        },
+        {
+            "role": "user",
+            "parts": [{ "text": "How old am I?" }]
+        },
+        {
+            "role": "user",
+            "parts": [{ "text": "My interests are programming and exercising." }]
+        },
+        {
+            "role": "user",
+            "parts": [{ "text": "What is my name? How old am I? What are my interests?" }]
+        }
+    ]
+}
