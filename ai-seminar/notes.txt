@@ -34,31 +34,31 @@ npm install body-parser
     "prompts": [
         {
             "role": "user",
-            "parts": [{ "text": "Hi, my name is Rein" }]
+            "parts": [{ "text": "hi, my name is rein" }]
         },
         {
             "role": "model",
-            "parts": [{ "text": "Hi Rein, it's nice to meet you!  How can I help you today?\n" }]
+            "parts": [{ "text": "hi rein, it's nice to meet you!  how can i help you today?\n" }]
         },
         {
             "role": "user",
-            "parts": [{ "text": "What is my name" }]
+            "parts": [{ "text": "what is my name" }]
         },
         {
             "role": "user",
-            "parts": [{ "text": "I am 21 years old" }]
+            "parts": [{ "text": "i am 21 years old" }]
         },
         {
             "role": "user",
-            "parts": [{ "text": "How old am I?" }]
+            "parts": [{ "text": "how old am i?" }]
         },
         {
             "role": "user",
-            "parts": [{ "text": "My interests are programming and exercising." }]
+            "parts": [{ "text": "my interests are programming and exercising." }]
         },
         {
             "role": "user",
-            "parts": [{ "text": "What is my name? How old am I? What are my interests?" }]
+            "parts": [{ "text": "What does SITE mean in UDD?"}]
         }
     ]
 }
