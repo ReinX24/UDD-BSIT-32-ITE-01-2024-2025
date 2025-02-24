@@ -1,7 +1,9 @@
 import Basic from "@/components/Basic";
 import ScrollViewComponent from "@/components/ScrollView";
 import TextInputComponent from "@/components/TextInput";
+import FlexLayout from "@/components/FlexLayout";
 import Styling from "@/components/Styling";
+import TouchableComponents from "@/components/Touchable";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
 function App() {
@@ -10,10 +12,12 @@ function App() {
             nestedScrollEnabled={true}
             contentContainerStyle={styles.scrollViewContent}
         >
-            <Basic />
-            <TextInputComponent />
-            <ScrollViewComponent />
-            <Styling />
+            {/* <Basic /> */}
+            {/* <TextInputComponent /> */}
+            {/* <ScrollViewComponent /> */}
+            {/* <Styling /> */}
+            {/* <FlexLayout /> */}
+            <TouchableComponents />
         </ScrollView>
     );
 }
