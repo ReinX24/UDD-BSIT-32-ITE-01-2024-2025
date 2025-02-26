@@ -1,0 +1,17 @@
+# Packages needed for react navigation
+npm install @react-navigation/native
+npx expo install react-native-screens react-native-safe-area-context
+
+# React navigation stack
+npm install @react-navigation/stack
+npm install react-native-gesture-handler
+
+# React navigation bottom tabs
+npm install @react-navigation/bottom-tabs
+
+# React navigation drawer
+npm install @react-navigation/drawer
+npm install react-native-gesture-handler react-native-reanimated
+
+# Creating a babel config file
+npx expo customize

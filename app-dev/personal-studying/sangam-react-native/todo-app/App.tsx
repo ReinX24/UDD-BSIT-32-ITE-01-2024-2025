@@ -35,6 +35,15 @@ export default function App() {
         );
     };
 
+    const editTodo = (id: string, newText: string) => {
+        // console.log(id, newText, "from App.tsx");
+        setTodoList(
+            todoList.map((item) => {
+                return item.id === id ? { ...item, text: newText } : item;
+            })
+        );
+    };
+
     const toggleTodo = (id: string) => {
         setTodoList(
             todoList.map((todoItem) => {
@@ -55,6 +64,7 @@ export default function App() {
                 todoList={todoList}
                 onDeleteTodo={deleteTodo}
                 onToggleTodo={toggleTodo}
+                onEditTodo={editTodo}
             />
             <StatusBar style="auto" />
         </View>
