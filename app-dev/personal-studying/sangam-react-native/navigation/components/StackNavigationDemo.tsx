@@ -3,7 +3,15 @@ import React from "react";
 import StackScreen1 from "./StackScreen1";
 import StackScreen2 from "./StackScreen2";
 
-const Stack = createStackNavigator();
+export type StackParamsList = {
+    StackScreen1: undefined;
+    // Dynamic screen which also accepts a itemId
+    StackScreen2: {
+        itemId: number;
+    };
+};
+
+const Stack = createStackNavigator<StackParamsList>();
 
 const StackNavigationDemo: React.FC = () => {
     return (
@@ -16,7 +24,11 @@ const StackNavigationDemo: React.FC = () => {
             <Stack.Screen
                 name="StackScreen2"
                 component={StackScreen2}
-                options={{ headerTitle: "Stack Screen Two" }}
+                options={({ route }) => {
+                    return {
+                        title: `Stack Screen Two - Item ${route.params.itemId}`,
+                    };
+                }}
             />
         </Stack.Navigator>
     );
