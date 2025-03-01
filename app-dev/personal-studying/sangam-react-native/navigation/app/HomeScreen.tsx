@@ -21,11 +21,22 @@ const HomeScreen: React.FC = () => {
                     navigation.navigate("Contact");
                 }}
             ></Button>
-
             <Button
                 title="Stack Navigator Demo"
                 onPress={() => {
                     navigation.navigate("StackDemo");
+                }}
+            ></Button>
+            <Button
+                title="Tab Navigator Demo"
+                onPress={() => {
+                    navigation.navigate("TabDemo");
+                }}
+            ></Button>
+            <Button
+                title="Drawer Navigator Demo"
+                onPress={() => {
+                    navigation.navigate("DrawerDemo");
                 }}
             ></Button>
         </View>

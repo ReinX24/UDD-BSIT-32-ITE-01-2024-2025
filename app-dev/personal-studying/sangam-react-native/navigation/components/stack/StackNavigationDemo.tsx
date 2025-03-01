@@ -5,10 +5,8 @@ import StackScreen2 from "./StackScreen2";
 
 export type StackParamsList = {
     StackScreen1: undefined;
-    // Dynamic screen which also accepts a itemId
-    StackScreen2: {
-        itemId: number;
-    };
+    // Dynamic screen which accepts a itemId
+    StackScreen2: { itemId: number };
 };
 
 const Stack = createStackNavigator<StackParamsList>();
