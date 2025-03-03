@@ -36,6 +36,21 @@ const topics = [
         title: "Pull to refresh demo",
         screen: "PullToRefreshDemo",
     },
+    {
+        id: 6,
+        title: "Data Fetching",
+        screen: "DataFetchingDemo",
+    },
+    {
+        id: 7,
+        title: "Axios",
+        screen: "AxiosDemo",
+    },
+    {
+        id: 8,
+        title: "Theme Demo",
+        screen: "ThemeDemo",
+    },
 ];
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
