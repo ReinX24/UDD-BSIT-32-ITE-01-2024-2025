@@ -26,7 +26,7 @@ const ThemeScreen: React.FC = () => {
                 Toggle Theme Demo
             </Text>
 
-            {/* TODO: try implementing this on another page or this page */}
+            {/* Try implementing this on another page or this page */}
             <Switch
                 value={isDarkMode}
                 onValueChange={toggleTheme}

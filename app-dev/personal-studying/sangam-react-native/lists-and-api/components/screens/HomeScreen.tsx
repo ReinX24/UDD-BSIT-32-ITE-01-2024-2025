@@ -6,9 +6,10 @@ import {
     FlatList,
     StyleSheet,
     TouchableOpacity,
+    Switch,
 } from "react-native";
 import { RootStackParamList } from "./RootNavigator";
-// import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../context/ThemeContext";
 
 const topics = [
     {
@@ -70,24 +71,67 @@ type TopicProps = {
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
     // const navigation = useNavigation<HomeScreenNavigationProp>();
 
+    const { theme, toggleTheme } = useTheme();
+
+    const isDarkMode = theme === "dark";
+
     const handleRenderItem = ({ item }: TopicProps) => {
         return (
             <TouchableOpacity
-                style={styles.topicButton}
+                style={[
+                    styles.topicButton,
+                    {
+                        backgroundColor: isDarkMode ? "#f2f2f2" : "#2f2f2f",
+                    },
+                ]}
                 onPress={() => {
                     navigation.navigate(
                         item.screen as keyof RootStackParamList
                     );
                 }}
             >
-                <Text style={styles.topicText}>{item.title}</Text>
+                <Text
+                    style={[
+                        styles.topicText,
+                        {
+                            color: isDarkMode ? "#2f2f2f" : "#f2f2f2",
+                        },
+                    ]}
+                >
+                    {item.title}
+                </Text>
             </TouchableOpacity>
         );
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>This is the HomeScreen</Text>
+        <View
+            style={[
+                styles.container,
+                {
+                    backgroundColor: isDarkMode ? "#2f2f2f" : "#f2f2f2",
+                },
+            ]}
+        >
+            <View style={styles.headerContainer}>
+                <Text
+                    style={[
+                        styles.header,
+                        {
+                            color: isDarkMode ? "#f2f2f2" : "#2f2f2f",
+                        },
+                    ]}
+                >
+                    This is the HomeScreen
+                </Text>
+                <Switch
+                    value={isDarkMode}
+                    onValueChange={toggleTheme}
+                    trackColor={{ false: "#2f2f2f", true: "#81b0ff" }}
+                    thumbColor={isDarkMode ? "#f5dd4b" : "#f2f2f2"}
+                    ios_backgroundColor={"#3e3e3e"}
+                />
+            </View>
             <FlatList data={topics} renderItem={handleRenderItem} />
         </View>
     );
@@ -97,6 +141,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    headerContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     header: {
         fontSize: 24,
