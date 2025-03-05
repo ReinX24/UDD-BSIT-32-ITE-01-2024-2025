@@ -12,7 +12,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator: React.FC = () => {
     return (
-        <Stack.Navigator id={undefined}>
+        <Stack.Navigator
+            id={undefined}
+            screenOptions={{ cardStyle: { flex: 1 } }}
+        >
             <Stack.Screen
                 name="HomeScreen"
                 component={HomeScreen}
