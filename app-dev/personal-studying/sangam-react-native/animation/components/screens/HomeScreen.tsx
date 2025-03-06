@@ -21,6 +21,11 @@ const screens = [
         title: "Basic Animation Demo",
         screen: "BasicAnimation",
     },
+    {
+        id: 3,
+        title: "Interpolation Demo",
+        screen: "InterpolationDemo",
+    },
 ];
 
 type ScreenProps = {
