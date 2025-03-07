@@ -1,5 +1,23 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import icons from "../../constants/icons";
+import { View, Image } from "react-native";
+
+const TabIcon = ({ icon, color, name, focused }) => {
+  return (
+    <View>
+      <Image
+        source={icon}
+        resizeMode="contain"
+        tintColor={color}
+        style={{
+          width: 24,
+          height: 24,
+        }}
+      />
+    </View>
+  );
+};
 
 const RootLayout = () => {
   return (
@@ -9,12 +27,13 @@ const RootLayout = () => {
         options={{
           headerTitle: "Home",
           tabBarShowLabel: false,
-          tabBarIcon: ({ focused }) => {
+          tabBarIcon: ({ color, focused }) => {
             return (
-              <Ionicons
-                name={focused ? "home" : "home-outline"}
-                size={24}
-                color="black"
+              <TabIcon
+                icon={icons.home}
+                color={color}
+                name="Home"
+                focused={focused}
               />
             );
           },

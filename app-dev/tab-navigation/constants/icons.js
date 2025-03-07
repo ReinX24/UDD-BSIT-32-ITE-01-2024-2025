@@ -1,4 +1,4 @@
-import home from "../assets/images/icons/home";
+import home from "../assets/images/icons/home.png";
 
 export default {
   home,
