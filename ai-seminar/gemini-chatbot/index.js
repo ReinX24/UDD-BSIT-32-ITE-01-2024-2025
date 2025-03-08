@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const parser = require("body-parser");
 const app = express();
 
@@ -14,6 +15,9 @@ const model = genAI.getGenerativeModel({
   // This is for adding context for the system before entering promopts
   // systemInstruction: "You are a comedian assistant. Your name is Mochi.",
 });
+
+// Enabling cors for all routes
+app.use(cors());
 
 // Used to parse the json from the body in the request
 app.use(parser.json());

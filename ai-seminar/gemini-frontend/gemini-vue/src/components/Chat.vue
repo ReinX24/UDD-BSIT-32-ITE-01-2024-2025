@@ -1,10 +1,22 @@
 <template>
   <div>
     <div class="chat-container">
-      <div class="messages"></div>
-      <form>
-        <textarea v-model="newMessage"></textarea>
-        <button>Submit</button>
+      <div class="messages">
+        <div
+          v-for="(message, index) in messages"
+          :key="index"
+          :class="['message', message.role === 'user' ? 'user-message' : 'ai-message']"
+        >
+          <strong>{{ message.role === 'user' ? 'User' : 'AI' }}</strong>
+          <p v-html="message.content"></p>
+        </div>
+      </div>
+      <!-- Ctrl + Enter -->
+      <form @submit.prevent="sendMessage" @keyup.enter="sendMessage" class="input-form">
+        <textarea v-model="newMessage" rows="3" placeholder="Type your message here"></textarea>
+        <button :disabled="isLoading" class="send-button">
+          {{ isLoading ? 'Sending...' : 'Send' }}
+        </button>
       </form>
     </div>
   </div>
@@ -22,7 +34,7 @@ const API_URL = 'http://localhost:8080'
 
 const sendMessage = async () => {
   // If the newMessage has no value
-  if (!newMessage.value || isLoading) {
+  if (!newMessage.value || isLoading.value) {
     return // terminates the script
   }
 
@@ -35,11 +47,15 @@ const sendMessage = async () => {
   // Add new message to messages
   messages.value.push(userMessage)
 
+  isLoading.value = true
+
   try {
     // Get all the messages except for the latest added message
     const chatHistory = messages.value.slice(0, -1).map((message) => {
-      role: message.role
-      parts: [{ text: message.content }]
+      return {
+        role: message.role,
+        parts: [{ text: message.content }],
+      }
     })
 
     // Make a POST request to the endpoint
@@ -53,8 +69,18 @@ const sendMessage = async () => {
       role: 'model',
       content: response.data.text,
     })
+
+    console.log(newMessage.value)
+    console.log(response.data.text)
   } catch (e) {
-    console.error(e)
+    console.error('Error sending message:', e)
+    messages.value.push({
+      role: 'model',
+      content: 'Sorry, there was an error processing your request.',
+    })
+  } finally {
+    newMessage.value = ''
+    isLoading.value = false
   }
 }
 </script>
@@ -99,12 +125,13 @@ const sendMessage = async () => {
   color: white;
   margin-left: 25%;
   position: relative;
+  padding-right: 2rem;
 }
 
 .user-message::after {
   content: '';
   position: absolute;
-  right: -10px;
+  right: -5px;
   top: 20px;
   width: 0;
   height: 0;
@@ -117,17 +144,19 @@ const sendMessage = async () => {
   margin-right: 25%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
+  color: #16213e;
+  padding-left: 2rem;
 }
 
 .ai-message::before {
   content: '';
   position: absolute;
-  left: -10px;
+  left: -5px;
   top: 20px;
   width: 0;
   height: 0;
   border: 10px solid transparent;
-  border-right-color: rgba(255, 255, 255, 0.95);
+  border-right-color: rgba(125, 125, 125, 0.95);
 }
 
 .message-header {
