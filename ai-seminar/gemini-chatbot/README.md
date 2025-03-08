@@ -46,7 +46,7 @@
 
 `npm install body-parser`
 
-#### For single prompt responses
+#### For single prompt responses (/chat, post request)
 
 ```
 {
@@ -54,7 +54,7 @@
 }
 ```
 
-#### For continuous conversation responses
+#### For continuous conversation responses (/chat-long, post request)
 
 ```
 {
@@ -119,3 +119,46 @@
 }
 
 ```
+
+#### For conversations with history (/chat-history, post request)
+
+```
+{
+  "history": [
+    {
+      "role": "user",
+      "parts": [{ "text": "My name is Rein." }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "Nice to meet you Rein, what do you want to know?" }]
+    },
+    {
+      "role": "user",
+      "parts": [{ "text": "I am also 21 years old." }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "You are 21 years old." }]
+    },
+    {
+      "role": "user",
+      "parts": [
+        { "text": "I an currently studying at Universidad De Dagupan." }
+      ]
+    },
+    {
+      "role": "model",
+      "parts": [
+        { "text": "You are currently studying at Universidad De Dagupan." }
+      ]
+    }
+  ],
+  "chat": "What is my name, how old am I, and where am I currently studying?"
+}
+
+```
+
+### Installing cors
+
+`npm install cors`
