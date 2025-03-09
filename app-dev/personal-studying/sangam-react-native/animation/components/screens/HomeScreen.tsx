@@ -36,6 +36,16 @@ const screens = [
     title: "Gesture Animation Demo",
     screen: "GestureAnimationDemo",
   },
+  {
+    id: 6,
+    title: "Reanimated Core Concepts Demo",
+    screen: "CoreConceptsDemo",
+  },
+  {
+    id: 7,
+    title: "Animation Types Demo",
+    screen: "AnimationTypesDemo",
+  },
 ];
 
 type ScreenProps = {
