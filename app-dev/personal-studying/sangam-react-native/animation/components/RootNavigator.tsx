@@ -7,6 +7,8 @@ import CombinedAnimationDemo from "./screens/CombinedAnimation";
 import GestureAnimationDemo from "./screens/GestureAnimation";
 import CoreConcepts from "./screens/CoreConcepts";
 import AnimationTypes from "./screens/AnimationTypes";
+import ReanimatedGestures from "./screens/ReanimatedGestures";
+import FormValidation from "./screens/FormValidation";
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -16,6 +18,8 @@ export type RootStackParamList = {
   GestureAnimationDemo: undefined;
   CoreConceptsDemo: undefined;
   AnimationTypesDemo: undefined;
+  ReanimatedGesturesDemo: undefined;
+  FormValidationDemo: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -53,6 +57,14 @@ const RootNavigator: React.FC = () => {
       <Stack.Screen
         name="AnimationTypesDemo"
         component={AnimationTypes}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="ReanimatedGesturesDemo"
+        component={ReanimatedGestures}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="FormValidationDemo"
+        component={FormValidation}
       ></Stack.Screen>
     </Stack.Navigator>
   );

@@ -4,6 +4,10 @@ import Animated, {
   TransformArrayItem,
   useAnimatedStyle,
   useSharedValue,
+  withDecay,
+  withDelay,
+  withRepeat,
+  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -49,6 +53,35 @@ const AnimationTypes = () => {
   const handleResetAnimation = () => {
     translateX.value = withTiming(0); // reset to original position
     scale.value = withTiming(1); // reset to default scale
+    rotate.value = withTiming(0);
+  };
+
+  // Decay animation
+  const handleDecayAnimation = () => {
+    translateX.value = withDecay({
+      velocity: 200,
+      clamp: [0, 300],
+    });
+  };
+
+  // Sequence animation
+  const handleSequenceAnimation = () => {
+    // Rotates the square 180 degrees and returns to original position
+    rotate.value = withSequence(
+      withTiming(360, { duration: 1000 }),
+      withTiming(0, { duration: 1000 })
+    );
+  };
+
+  // Repeat animation
+  const handleRepeatAnimation = () => {
+    // Each pulse and reset counts as 2, pulses 3 times if 6
+    scale.value = withRepeat(withTiming(1.2, { duration: 500 }), 6, true);
+  };
+
+  // Delay animation
+  const handleDelayAnimation = () => {
+    translateX.value = withDelay(1000, withSpring(200));
   };
 
   return (
@@ -64,16 +97,16 @@ const AnimationTypes = () => {
         <Pressable style={styles.button} onPress={handleSpingAnimation}>
           <Text style={styles.buttonText}>Spring</Text>
         </Pressable>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleDecayAnimation}>
           <Text style={styles.buttonText}>Decay</Text>
         </Pressable>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleSequenceAnimation}>
           <Text style={styles.buttonText}>Sequence</Text>
         </Pressable>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleRepeatAnimation}>
           <Text style={styles.buttonText}>Repeat</Text>
         </Pressable>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleDelayAnimation}>
           <Text style={styles.buttonText}>Delay</Text>
         </Pressable>
         <Pressable style={styles.button} onPress={handleResetAnimation}>

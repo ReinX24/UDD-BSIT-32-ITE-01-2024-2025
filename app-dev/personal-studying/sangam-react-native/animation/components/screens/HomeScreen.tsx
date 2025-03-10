@@ -43,8 +43,18 @@ const screens = [
   },
   {
     id: 7,
-    title: "Animation Types Demo",
+    title: "Animation Types Demo (Reanimated)",
     screen: "AnimationTypesDemo",
+  },
+  {
+    id: 8,
+    title: "Gesture Handler Demo (Reanimated)",
+    screen: "ReanimatedGesturesDemo",
+  },
+  {
+    id: 9,
+    title: "Form Validation Demo (Reanimated)",
+    screen: "FormValidationDemo",
   },
 ];
 
