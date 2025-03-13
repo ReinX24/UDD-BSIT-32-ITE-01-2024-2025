@@ -1,13 +1,16 @@
-import { StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import RootNavigation from "./app/navigation/RootNavigation";
+import { Provider } from "react-redux";
+import { store } from "./app/store/store";
 
 const App = (): React.JSX.Element => {
   return (
-    <View>
-      <Text>React Redux</Text>
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <RootNavigation />
+      </NavigationContainer>
+    </Provider>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default App;
