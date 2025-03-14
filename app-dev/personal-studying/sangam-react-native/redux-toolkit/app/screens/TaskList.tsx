@@ -6,10 +6,28 @@ import {
   KeyboardAvoidingView,
   TextInput,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { addTask } from "../store/tasksSlice";
 
 const TaskList: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleAddNewTask = () => {
+    if (newTaskTitle.trim()) {
+      dispatch(
+        addTask({
+          title: newTaskTitle.trim(),
+          completed: false,
+        })
+      );
+
+      setNewTaskTitle("");
+      setIsModalVisible(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -52,7 +70,22 @@ const TaskList: React.FC = () => {
               autoFocus
             />
 
-            <View style={styles.buttonContainer}></View>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => {
+                  setIsModalVisible(false);
+                }}
+              >
+                <Text style={styles.closeButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.submitButton]}
+                onPress={handleAddNewTask}
+              >
+                <Text style={styles.closeButtonText}>Add Task</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -129,7 +162,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 16,
   },
-  buttonContainer: {},
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  modalButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 40,
+    marginLeft: 10,
+  },
+  cancelButton: {
+    backgroundColor: "#D37C09",
+  },
+  submitButton: {
+    backgroundColor: "#008080",
+  },
 });
 
 export default TaskList;
