@@ -15,6 +15,8 @@ const TaskList: React.FC = () => {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const dispatch = useDispatch<AppDispatch>();
 
+  // TODO: show stored tasks here
+
   const handleAddNewTask = () => {
     if (newTaskTitle.trim()) {
       dispatch(
