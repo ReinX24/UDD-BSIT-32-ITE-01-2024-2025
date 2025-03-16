@@ -1,21 +1,33 @@
-import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import {
   TouchableOpacity,
   Modal,
   KeyboardAvoidingView,
   TextInput,
 } from "react-native";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store/store";
-import { addTask } from "../store/tasksSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { addTask, fetchTasks } from "../store/tasksSlice";
 
 const TaskList: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+  const tasks = useSelector((state: RootState) => {
+    return state.tasks.tasksList;
+  });
+  const status = useSelector((state: RootState) => {
+    return state.tasks.status;
+  });
 
-  // TODO: show stored tasks here
+  console.log(tasks, "tasksList");
+
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchTasks());
+    }
+  }, [status, dispatch]);
 
   const handleAddNewTask = () => {
     if (newTaskTitle.trim()) {
@@ -31,9 +43,25 @@ const TaskList: React.FC = () => {
     }
   };
 
+  // TODO: add styling to listed tasks
+  const createRenderTask = ({ item }) => {
+    return (
+      <View>
+        <Text>{item.title}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Render list of tasks here */}
+      <FlatList
+        data={tasks}
+        renderItem={createRenderTask}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
+      />
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {

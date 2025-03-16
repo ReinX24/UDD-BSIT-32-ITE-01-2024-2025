@@ -8,7 +8,7 @@ export interface Task {
 }
 
 interface TasksState {
-  tasks: Task[];
+  tasksList: Task[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
@@ -35,7 +35,7 @@ export const addTask = createAsyncThunk(
 );
 
 const tasksInitialState: TasksState = {
-  tasks: [],
+  tasksList: [],
   status: "idle",
   error: null,
 };
@@ -51,14 +51,14 @@ const tasksSlice = createSlice({
       })
       .addCase(fetchTasks.fulfilled, (state, action: PayloadAction<Task[]>) => {
         state.status = "succeeded";
-        state.tasks = action.payload;
+        state.tasksList = action.payload;
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || null;
       })
       .addCase(addTask.fulfilled, (state, action) => {
-        state.tasks.push(action.payload);
+        state.tasksList.push(action.payload);
       });
   },
 });
