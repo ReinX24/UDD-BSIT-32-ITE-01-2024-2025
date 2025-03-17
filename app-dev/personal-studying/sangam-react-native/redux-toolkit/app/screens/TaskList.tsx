@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import {
   TouchableOpacity,
   Modal,
@@ -8,7 +8,13 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { addTask, fetchTasks } from "../store/tasksSlice";
+import { addTask, fetchTasks, Task } from "../store/tasksSlice";
+import {
+  FadeInRight,
+  FadeOutLeft,
+  LinearTransition,
+} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 const TaskList: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -43,12 +49,52 @@ const TaskList: React.FC = () => {
     }
   };
 
-  // TODO: add styling to listed tasks
-  const createRenderTask = ({ item }) => {
+  const handleDeleteTask = (taskId: string) => {
+    Alert.alert(
+      "Delete task",
+      "Are you sure that you want to delete this task?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
+  const createRenderTask = ({ item }: { item: Task }) => {
     return (
-      <View>
-        <Text>{item.title}</Text>
-      </View>
+      <Animated.View
+        entering={FadeInRight}
+        exiting={FadeOutLeft}
+        layout={LinearTransition.springify()}
+      >
+        <TouchableOpacity
+          style={[styles.taskItem, item.completed && styles.completedTaskItem]}
+        >
+          <Text
+            style={[
+              styles.taskItemText,
+              item.completed && styles.completedTaskItemText,
+            ]}
+          >
+            {item.title}
+          </Text>
+
+          <TouchableOpacity
+            style={styles.deleteTaskButton}
+            onPress={() => {
+              handleDeleteTask(item.id);
+            }}
+          >
+            <Text style={styles.deleteTaskButtonText}>Delete</Text>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -207,6 +253,37 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "#008080",
+  },
+  taskItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    padding: 16,
+    marginVertical: 8,
+    marginHorizontal: 8,
+    borderRadius: 8,
+    elevation: 2,
+  },
+  completedTaskItem: {
+    opacity: 0.7,
+  },
+  taskItemText: {
+    marginLeft: 10,
+    fontSize: 16,
+    flex: 1,
+  },
+  completedTaskItemText: {
+    textDecorationStyle: "dashed",
+  },
+  deleteTaskButton: {
+    backgroundColor: "#D34909",
+    padding: 12,
+    borderRadius: 40,
+  },
+  deleteTaskButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#ffffff",
   },
 });
 

@@ -19,6 +19,7 @@ export const fetchTasks = createAsyncThunk("/tasks/fetchTasks", async () => {
 });
 
 export const addTask = createAsyncThunk(
+  // This changes the item in storage
   "tasks/addTask",
   // Do not require id from the new task
   async (task: Omit<Task, "id">) => {
@@ -40,6 +41,21 @@ const tasksInitialState: TasksState = {
   error: null,
 };
 
+export const deleteTask = createAsyncThunk(
+  "tasks/deleteTask",
+  async (taskId: string, { getState }) => {
+    const state = getState() as { tasks: TasksState };
+
+    const updatedTasks = state.tasks.tasksList.filter((item) => {
+      return item.id !== taskId;
+    });
+
+    await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
+    return taskId;
+  }
+);
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState: tasksInitialState,
@@ -58,7 +74,13 @@ const tasksSlice = createSlice({
         state.error = action.error.message || null;
       })
       .addCase(addTask.fulfilled, (state, action) => {
+        // This changes the state items
         state.tasksList.push(action.payload);
+      })
+      .addCase(deleteTask.fulfilled, (state, action: PayloadAction<string>) => {
+        state.tasksList = state.tasksList.filter((item) => {
+          return item.id !== action.payload;
+        });
       });
   },
 });
