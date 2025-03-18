@@ -31,6 +31,9 @@ export const addTask = createAsyncThunk(
     tasks.push(newTask);
 
     await AsyncStorage.setItem("tasks", JSON.stringify(tasks));
+
+    console.log("ADD TASK FUNCTION");
+
     return newTask;
   }
 );
@@ -56,6 +59,32 @@ export const deleteTask = createAsyncThunk(
   }
 );
 
+export const toggleTask = createAsyncThunk(
+  "tasks/toggletask",
+  async (taskId: string, { getState }) => {
+    const state = getState() as { tasks: TasksState };
+    const task = state.tasks.tasksList.find((taskItem) => {
+      return taskItem.id == taskId;
+    });
+
+    // If the tasks exists, toggle the task
+    if (task) {
+      const updatedTask = { ...task, completed: !task.completed };
+      const updatedTasks = state.tasks.tasksList.map((item) => {
+        // If the current item is the matched item id, return updated version
+        // else, return the old item version (for tasks not edited)
+        return item.id === taskId ? updatedTask : item;
+      });
+
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
+      return updatedTask;
+    } else {
+      throw new Error("Task not found.");
+    }
+  }
+);
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState: tasksInitialState,
@@ -76,11 +105,23 @@ const tasksSlice = createSlice({
       .addCase(addTask.fulfilled, (state, action) => {
         // This changes the state items
         state.tasksList.push(action.payload);
+        console.log("ADD TASK REDUCER");
       })
       .addCase(deleteTask.fulfilled, (state, action: PayloadAction<string>) => {
         state.tasksList = state.tasksList.filter((item) => {
           return item.id !== action.payload;
         });
+      })
+      .addCase(toggleTask.fulfilled, (state, action: PayloadAction<Task>) => {
+        // Find the index of the toggled task
+        const index = state.tasksList.findIndex((item) => {
+          return item.id === action.payload.id;
+        });
+
+        // Changes the data in the index with the new passed in updated data
+        if (index !== -1) {
+          state.tasksList[index] = action.payload;
+        }
       });
   },
 });

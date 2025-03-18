@@ -8,7 +8,13 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { addTask, fetchTasks, Task } from "../store/tasksSlice";
+import {
+  addTask,
+  deleteTask,
+  fetchTasks,
+  Task,
+  toggleTask,
+} from "../store/tasksSlice";
 import {
   FadeInRight,
   FadeOutLeft,
@@ -61,6 +67,9 @@ const TaskList: React.FC = () => {
         {
           text: "Delete",
           style: "destructive",
+          onPress: () => {
+            return dispatch(deleteTask(taskId));
+          },
         },
       ]
     );
@@ -75,6 +84,9 @@ const TaskList: React.FC = () => {
       >
         <TouchableOpacity
           style={[styles.taskItem, item.completed && styles.completedTaskItem]}
+          onPress={() => {
+            dispatch(toggleTask(item.id));
+          }}
         >
           <Text
             style={[
@@ -273,7 +285,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   completedTaskItemText: {
-    textDecorationStyle: "dashed",
+    textDecorationLine: "line-through",
   },
   deleteTaskButton: {
     backgroundColor: "#D34909",
