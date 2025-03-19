@@ -1,0 +1,2 @@
+# Create expo project in current folder
+npx create-expo-app@latest
