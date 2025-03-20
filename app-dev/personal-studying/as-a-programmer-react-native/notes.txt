@@ -1,2 +1,5 @@
 # Create expo project in current folder
 npx create-expo-app@latest
+
+# Resetting our project
+npm run reset-project
