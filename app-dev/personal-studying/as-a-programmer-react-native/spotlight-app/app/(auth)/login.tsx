@@ -3,7 +3,7 @@ import { styles } from "@/styles/auth.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { useSSO } from "@clerk/clerk-expo";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function login() {
   const { startSSOFlow } = useSSO();
@@ -57,6 +57,9 @@ export default function login() {
           </View>
           <Text style={styles.googleButtonText}>Continue with Google</Text>
         </TouchableOpacity>
+        <Text style={styles.termsText}>
+          By continuing, you agree to our Terms and Privacy Policy
+        </Text>
       </View>
     </View>
   );
