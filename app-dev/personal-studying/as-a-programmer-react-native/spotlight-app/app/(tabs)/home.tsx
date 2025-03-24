@@ -6,6 +6,8 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <Link href={"/notifications"}>Visit notifications screen</Link>
+      {/* TODO: continue 340 - @20:32  */}
+      <TouchableOpacity></TouchableOpacity>
     </View>
   );
 }

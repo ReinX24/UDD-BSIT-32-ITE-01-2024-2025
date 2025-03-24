@@ -14,6 +14,7 @@ export default function InitialLayout() {
       return;
     }
 
+    // Check if the current screen is in the auth screen
     const inAuthScreen = segments[0] === "(auth)";
 
     if (!isSignedIn && !inAuthScreen) {
