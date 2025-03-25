@@ -11,7 +11,12 @@ export default function RootLayout() {
     // on screen
     <ClerkAndConvexProdivder>
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: "black",
+          }}
+        >
           <InitialLayout />
           {/* <Stack
             screenOptions={{
@@ -21,8 +26,8 @@ export default function RootLayout() {
           {/* <Stack.Screen name="index" /> */}
           {/* <Stack.Screen name="old_index" /> */}
           {/* </Stack> */}
+          <StatusBar style="auto" />
         </SafeAreaView>
-        <StatusBar style="dark" />
       </SafeAreaProvider>
     </ClerkAndConvexProdivder>
   );

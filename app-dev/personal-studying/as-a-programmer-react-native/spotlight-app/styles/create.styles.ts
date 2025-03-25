@@ -1,5 +1,7 @@
+// styles/create.styles.ts
 import { StyleSheet, Dimensions } from "react-native";
 import { COLORS } from "@/constants/theme";
+import { StatusBar } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -7,6 +9,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    paddingTop: StatusBar.currentHeight,
   },
   contentContainer: {
     flex: 1,
