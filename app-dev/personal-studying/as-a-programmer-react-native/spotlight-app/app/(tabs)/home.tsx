@@ -1,6 +1,5 @@
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "../../styles/auth.styles";
-import { Link } from "expo-router";
+import { styles } from "../../styles/feed.styles";
 import { useAuth } from "@clerk/clerk-expo";
 
 export default function Home() {
@@ -21,6 +20,11 @@ export default function Home() {
           Signout
         </Text>
       </TouchableOpacity>
+
+      {/* Header */}
+      <View style={styles.header}>
+          {/* TODO: resume @344 - 1:21 */}
+      </View>
     </View>
   );
 }

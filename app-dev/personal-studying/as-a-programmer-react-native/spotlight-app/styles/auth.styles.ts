@@ -1,7 +1,6 @@
 // styles/auth.styles.ts
 import { COLORS } from "@/constants/theme";
-import { StyleSheet, Dimensions } from "react-native";
-import { StatusBar } from "react-native";
+import { StyleSheet, Dimensions, StatusBar } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 

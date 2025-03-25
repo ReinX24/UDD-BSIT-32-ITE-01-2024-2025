@@ -10,11 +10,15 @@ import {
   Platform,
   ActivityIndicator,
   ScrollView,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -37,7 +41,46 @@ export default function CreateScreen() {
     }
   };
 
-  const handleShare = () => {};
+  // Getting convex functions from our posts.ts file
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+  const createPost = useMutation(api.posts.createPost);
+
+  const handleShare = async () => {
+    if (!selectedImage) {
+      return;
+    }
+
+    try {
+      setIsSharing(true);
+      const uploadUrl = await generateUploadUrl();
+
+      // Upload the contents of the image to a specific url
+      const uploadResult = await FileSystem.uploadAsync(
+        uploadUrl,
+        selectedImage,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+          mimeType: "image/jpeg",
+        }
+      );
+
+      if (uploadResult.status !== 200) {
+        throw new Error("Upload failed");
+      }
+
+      const { storageId } = JSON.parse(uploadResult.body);
+      await createPost({ storageId, caption });
+
+      router.push("/(tabs)/home");
+    } catch (error) {
+      console.log("Error sharing post", error);
+    } finally {
+      setIsSharing(false);
+      setSelectedImage(null);
+      setCaption("");
+    }
+  };
 
   if (!selectedImage) {
     // This shows when there is no image selected
@@ -117,6 +160,7 @@ export default function CreateScreen() {
           contentContainerStyle={styles.scrollContent}
           bounces={false}
           keyboardShouldPersistTaps="handled"
+          contentOffset={{ x: 0, y: 100 }}
         >
           <View style={[styles.content, isSharing && styles.contentDisabled]}>
             {/* IMAGE SECTION */}
@@ -139,7 +183,25 @@ export default function CreateScreen() {
             {/* END OF IMAGE SECTION */}
 
             {/* CAPTION SECTION */}
-            {/* TODO: resume 342 - @12:32 */}
+            <View style={styles.inputSection}>
+              <View style={styles.captionContainer}>
+                <Image
+                  source={user?.imageUrl}
+                  style={styles.userAvatar}
+                  contentFit="cover"
+                  transition={200}
+                />
+                <TextInput
+                  style={styles.captionInput}
+                  placeholder="Write a caption..."
+                  placeholderTextColor={COLORS.grey}
+                  multiline
+                  value={caption}
+                  onChangeText={setCaption}
+                  editable={!isSharing}
+                />
+              </View>
+            </View>
             {/* END OF CAPTION SECTION */}
           </View>
         </ScrollView>
