@@ -3,7 +3,7 @@ import { styles } from "../styles/auth.styles";
 
 export default function old_index() {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>old_index</Text>
 
       <Image

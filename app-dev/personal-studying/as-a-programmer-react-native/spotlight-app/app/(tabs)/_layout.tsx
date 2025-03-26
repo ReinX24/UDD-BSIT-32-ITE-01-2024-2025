@@ -1,12 +1,23 @@
 import { Tabs } from "expo-router";
-import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "@/constants/theme";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.grey,
+        tabBarStyle: {
+          backgroundColor: "black",
+          borderTopWidth: 0,
+          position: "absolute",
+          elevation: 0,
+          height: 40,
+          paddingBottom: 8,
+        },
       }}
     >
       <Tabs.Screen
@@ -17,10 +28,40 @@ export default function TabLayout() {
           },
         }}
       />
-      <Tabs.Screen name="bookmarks" />
-      <Tabs.Screen name="create" />
-      <Tabs.Screen name="notifications" />
-      <Tabs.Screen name="profile" />
+      <Tabs.Screen
+        name="bookmarks"
+        options={{
+          tabBarIcon: ({ size, color }) => {
+            return <Ionicons name="bookmark" size={size} color={color} />;
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          tabBarIcon: ({ size, color }) => {
+            return (
+              <Ionicons name="add-circle" size={size} color={COLORS.primary} />
+            );
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          tabBarIcon: ({ size, color }) => {
+            return <Ionicons name="heart" size={size} color={color} />;
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ size, color }) => {
+            return <Ionicons name="person-circle" size={size} color={color} />;
+          },
+        }}
+      />
     </Tabs>
   );
 }

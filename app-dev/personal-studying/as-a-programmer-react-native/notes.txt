@@ -3,3 +3,9 @@ npx create-expo-app@latest
 
 # Resetting our project
 npm run reset-project
+
+# Running expo app
+npx expo
+
+# Syncing convex configuration and files to our backend, should run continuously
+npx convex dev
