@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import { View, Text } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StatusBar } from "expo-status-bar";
 
 export default function TabsLayout() {
   return (
@@ -54,7 +53,6 @@ export default function TabsLayout() {
           },
         }}
       ></Tabs.Screen>
-      <StatusBar style="auto" />
     </Tabs>
   );
 }
