@@ -51,7 +51,10 @@ export default function Home() {
       </View>
       {/* End of Header */}
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 60 }}
+      >
         <ScrollView
           horizontal
           showsVerticalScrollIndicator={false}
@@ -66,7 +69,7 @@ export default function Home() {
 
         {/* Posts */}
         {posts.map((post) => {
-          return <Post key={post._id} post={post}></Post>;
+          return <Post key={post._id} post={post} />;
         })}
         {/* End of Posts */}
       </ScrollView>

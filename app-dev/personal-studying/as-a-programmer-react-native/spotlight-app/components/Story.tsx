@@ -1,14 +1,16 @@
 import { styles } from "@/styles/feed.styles";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 
-type Story = {
-  id: string;
-  username: string;
-  avatar: string;
-  hasStory: boolean;
+type StoryProps = {
+  story: {
+    id: string;
+    username: string;
+    avatar: string;
+    hasStory: boolean;
+  };
 };
 
-export default function Story({ story }: { story: Story }) {
+export default function Story({ story }: StoryProps) {
   return (
     <TouchableOpacity style={[styles.storyWrapper]}>
       <View style={[styles.storyRing, !story.hasStory && styles.noStory]}>
