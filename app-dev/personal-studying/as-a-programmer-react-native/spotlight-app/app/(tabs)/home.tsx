@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { styles } from "../../styles/feed.styles";
 import { useAuth } from "@clerk/clerk-expo";
@@ -16,6 +17,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function Home() {
   const { signOut } = useAuth();
@@ -51,31 +53,53 @@ export default function Home() {
       </View>
       {/* End of Header */}
 
-      <ScrollView
+      {/* Using FlatList instead of ScrollView */}
+      {/* FlatList: only loads needed data */}
+      {/* ScrollView: loads all data */}
+      <FlatList
+        data={posts}
+        renderItem={({ item }: any) => {
+          return <Post post={item} />;
+        }}
+        keyExtractor={(item) => {
+          return item._id;
+        }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
-      >
-        <ScrollView
-          horizontal
-          showsVerticalScrollIndicator={false}
-          style={[styles.storiesContainer]}
-        >
-          {/* Stories */}
-          {STORIES.map((story) => {
-            return <Story key={story.id} story={story}></Story>;
-          })}
-          {/* End of Stories */}
-        </ScrollView>
-
-        {/* Posts */}
-        {posts.map((post) => {
-          return <Post key={post._id} post={post} />;
-        })}
-        {/* End of Posts */}
-      </ScrollView>
+        ListHeaderComponent={<StoriesSection />}
+      />
     </View>
   );
 }
+
+const StoriesSection = () => {
+  return (
+    // Using FlatList (only loads needed data)
+    <FlatList
+      data={STORIES}
+      renderItem={({ item }: any) => {
+        return <Story story={item} />;
+      }}
+      keyExtractor={(item) => {
+        return item.id;
+      }}
+      horizontal
+      showsVerticalScrollIndicator={false}
+      style={styles.storiesContainer}
+    />
+
+    // Using ScrollView (loads all data at once)
+    // <ScrollView
+    //   horizontal
+    //   showsVerticalScrollIndicator={false}
+    //   style={[styles.storiesContainer]}
+    // >
+    //   {STORIES.map((story) => {
+    //     return <Story key={story.id} story={story}></Story>;
+    //   })}
+    // </ScrollView>
+  );
+};
 
 const NoPostsFound = () => {
   return (
