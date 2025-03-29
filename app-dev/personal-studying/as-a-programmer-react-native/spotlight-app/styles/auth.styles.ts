@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 42,
-    fontWeight: "700",
+    // fontWeight: "700",
     fontFamily: "JetBrainsMono-Medium",
     color: COLORS.primary,
     letterSpacing: 0.5,

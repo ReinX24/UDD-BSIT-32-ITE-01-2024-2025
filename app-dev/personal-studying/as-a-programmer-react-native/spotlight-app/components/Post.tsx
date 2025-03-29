@@ -9,6 +9,7 @@ import { useState } from "react";
 import { toggleLike } from "@/convex/posts";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import CommentsModal from "./CommentsModal";
 
 type PostProps = {
   post: {
@@ -30,6 +31,10 @@ type PostProps = {
 
 export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [commentsCount, setCommentsCount] = useState(post.comments);
+
+  // The comments inside a modal are hidden by default
+  const [showComments, setShowComments] = useState(false);
 
   const toggleLike = useMutation(api.posts.toggleLike);
 
@@ -135,6 +140,19 @@ export default function Post({ post }: PostProps) {
         <Text style={styles.timeAgo}>2 hours age</Text>
       </View>
       {/* END OF POST INFO */}
+
+      {/* COMMENTS MODAL */}
+      <CommentsModal
+        postId={post._id}
+        visible={showComments}
+        onClose={() => {
+          return setShowComments(false);
+        }}
+        onCommentAdded={() => {
+          setCommentsCount((prev) => prev + 1);
+        }}
+      />
+      {/* END OF COMMENTS MODAL */}
     </View>
   );
 }
