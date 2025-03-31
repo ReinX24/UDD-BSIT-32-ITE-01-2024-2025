@@ -12,8 +12,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  FlatList,
+  TextInput,
 } from "react-native";
 import Loader from "./Loader";
+import Comment from "./Comment";
 
 type CommentsModalProps = {
   postId: Id<"posts">;
@@ -32,12 +35,14 @@ export default function CommentsModal({
   const comments = useQuery(api.comments.getComments, { postId: postId });
   const addComment = useMutation(api.comments.addComment);
 
-  const handleAddComment = async () => {};
+  const handleAddComment = async () => {
+    console.log(newComment);
+  };
 
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       onRequestClose={onClose}
     >
@@ -56,8 +61,46 @@ export default function CommentsModal({
         {/* END OF MODAL HEADER WITH CLOSE BUTTON */}
 
         {/* If the comments are undefined, they are being loaded */}
-        {/* TODO: continue @347 - 11:50 */}
-        {comments === undefined ? <Loader /> : <></>}
+        {comments === undefined ? (
+          <Loader />
+        ) : (
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }: any) => {
+              return <Comment comment={item} />;
+            }}
+            contentContainerStyle={styles.commentsList}
+          />
+        )}
+
+        {/* TEXT INPUT FOR NEW COMMENT */}
+        <View style={styles.commentInput}>
+          <TextInput
+            style={styles.input}
+            placeholder="Add a comment..."
+            placeholderTextColor={COLORS.grey}
+            value={newComment}
+            onChangeText={setNewComment}
+            multiline
+          />
+
+          {/* Post button */}
+          <TouchableOpacity
+            onPress={handleAddComment}
+            disabled={!newComment.trim()}
+          >
+            <Text
+              style={[
+                styles.postButton,
+                !newComment.trim() && styles.postButtonDisabled,
+              ]}
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {/* END OF TEXT INPUT FOR NEW COMMENT */}
       </KeyboardAvoidingView>
     </Modal>
   );
