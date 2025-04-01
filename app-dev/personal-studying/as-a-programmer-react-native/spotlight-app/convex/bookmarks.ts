@@ -45,10 +45,10 @@ export const getBookmarkedPosts = query({
       })
       .collect();
 
+    // Get all posts that are bookmarked
     const bookmarksWithInfo = await Promise.all(
       bookmarks.map(async (bookmark) => {
         const post = await ctx.db.get(bookmark.postId);
-        // TODO: continue @1:47
         return post;
       })
     );
