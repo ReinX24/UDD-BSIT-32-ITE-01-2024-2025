@@ -36,7 +36,25 @@ export default function CommentsModal({
   const addComment = useMutation(api.comments.addComment);
 
   const handleAddComment = async () => {
-    console.log(newComment);
+    if (!newComment.trim()) {
+      return;
+    }
+
+    try {
+      // Add comment to our convex database
+      await addComment({
+        content: newComment,
+        postId: postId,
+      });
+
+      // Reset the contents of the comment
+      setNewComment("");
+
+      // Call onCommentAdded, increments comment count
+      onCommentAdded();
+    } catch (error) {
+      console.log("Error adding comment:", error);
+    }
   };
 
   return (

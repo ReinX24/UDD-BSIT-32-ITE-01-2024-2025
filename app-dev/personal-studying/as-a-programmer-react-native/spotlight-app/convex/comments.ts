@@ -67,6 +67,6 @@ export const getComments = query({
       })
     );
 
-    return comments;
+    return commentsWithInfo;
   },
 });

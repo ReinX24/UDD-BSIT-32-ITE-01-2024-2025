@@ -10,6 +10,7 @@ import { toggleLike } from "@/convex/posts";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CommentsModal from "./CommentsModal";
+import { formatDistanceToNow } from "date-fns";
 
 type PostProps = {
   post: {
@@ -137,11 +138,22 @@ export default function Post({ post }: PostProps) {
           </View>
         )}
 
-        <TouchableOpacity>
-          <Text style={styles.commentText}>View all 2 comments</Text>
-        </TouchableOpacity>
+        {/* Only show this when there are comments */}
+        {post.comments > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              setShowComments(true);
+            }}
+          >
+            <Text style={styles.commentText}>
+              {`View ${commentsCount == 1 ? `${commentsCount} comment` : `all ${commentsCount} comments`}`}
+            </Text>
+          </TouchableOpacity>
+        )}
 
-        <Text style={styles.timeAgo}>2 hours age</Text>
+        <Text style={styles.timeAgo}>
+          {formatDistanceToNow(post._creationTime, { addSuffix: true })}
+        </Text>
       </View>
       {/* END OF POST INFO */}
 
@@ -153,7 +165,9 @@ export default function Post({ post }: PostProps) {
           return setShowComments(false);
         }}
         onCommentAdded={() => {
-          setCommentsCount((prev) => prev + 1);
+          setCommentsCount((prev) => {
+            return prev + 1;
+          });
         }}
       />
       {/* END OF COMMENTS MODAL */}
