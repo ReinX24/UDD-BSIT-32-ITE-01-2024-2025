@@ -14,7 +14,7 @@ export const getNotifications = query({
       .order("desc")
       .collect();
 
-    const notificationInfo = await Promise.all(
+    const notificationWithInfo = await Promise.all(
       notifications.map(async (notification) => {
         // ()! means that this can never be null
         const sender = (await ctx.db.get(notification.senderId))!;
@@ -39,10 +39,12 @@ export const getNotifications = query({
             username: sender.username,
             image: sender.image,
           },
+          post,
+          comment: comment?.content,
         };
       })
     );
 
-    return notifications;
+    return notificationWithInfo;
   },
 });
