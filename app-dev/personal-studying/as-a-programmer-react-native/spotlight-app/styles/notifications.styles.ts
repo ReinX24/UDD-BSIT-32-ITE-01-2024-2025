@@ -1,11 +1,12 @@
 // styles/notifications.styles.ts
-import { StyleSheet } from "react-native";
+import { StatusBar, StyleSheet } from "react-native";
 import { COLORS } from "@/constants/theme";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    paddingTop: StatusBar.currentHeight,
   },
   header: {
     paddingHorizontal: 16,

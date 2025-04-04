@@ -1,12 +1,45 @@
 import { COLORS } from "@/constants/theme";
+import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "@/styles/notifications.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
-export default function NotificationItem({ notification }: any) {
+type NotificationProps = {
+  notification: {
+    receiverId: Id<"users">;
+    senderId: Id<"users">;
+    type: string;
+    postId: Id<"posts">;
+    commentId: Id<"comments">;
+    _creationTime: string;
+    sender: {
+      _id: Id<"users">;
+      username: string;
+      image: string;
+    };
+    comment: string;
+    post: {
+      _id: Id<"posts">;
+      imageUrl: string;
+      caption?: string;
+      likes: number;
+      comments: number;
+      _creationTime: number;
+      isLiked: boolean;
+      isBookmarked: boolean;
+      author: {
+        _id: Id<"users">;
+        username: string;
+        image: string;
+      };
+    };
+  };
+};
+
+export default function Notification({ notification }: NotificationProps) {
   return (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
@@ -63,8 +96,14 @@ export default function NotificationItem({ notification }: any) {
       </View>
 
       {/* SHOW POST PHOTO IF RELATED TO A POST */}
-      {/* TODO: Continue @351 - 14:33 */}
-      {notification.post && <Image />}
+      {notification.post && (
+        <Image
+          source={notification.post.imageUrl}
+          style={styles.postImage}
+          contentFit="cover"
+          transition={200}
+        />
+      )}
     </View>
   );
 }

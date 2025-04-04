@@ -10,7 +10,7 @@ export default function destinations() {
             source={require("../../assets/images/boracay.png")}
             style={styles.image}
           ></Image>
-          <Text>Vigan</Text>
+          <Text>Boracay</Text>
           <Link href={"/destination1"} style={styles.destinationLink}>
             Book Now
           </Link>

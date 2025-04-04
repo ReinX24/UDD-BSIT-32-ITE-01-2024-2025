@@ -1,23 +1,18 @@
-import {
-  Image,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView,
-  FlatList,
-} from "react-native";
-import { styles } from "../../styles/feed.styles";
-import { useAuth } from "@clerk/clerk-expo";
-import { COLORS } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { STORIES } from "@/constants/mock-data";
-import Story from "@/components/Story";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
-import { Id } from "@/convex/_generated/dataModel";
+import Stories from "@/components/Stories";
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { styles } from "../../styles/feed.styles";
 
 export default function Home() {
   const { signOut } = useAuth();
@@ -66,40 +61,11 @@ export default function Home() {
         }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
-        ListHeaderComponent={<StoriesSection />}
+        ListHeaderComponent={<Stories />}
       />
     </View>
   );
 }
-
-const StoriesSection = () => {
-  return (
-    // Using FlatList (only loads needed data)
-    <FlatList
-      data={STORIES}
-      renderItem={({ item }: any) => {
-        return <Story story={item} />;
-      }}
-      keyExtractor={(item) => {
-        return item.id;
-      }}
-      horizontal
-      showsVerticalScrollIndicator={false}
-      style={styles.storiesContainer}
-    />
-
-    // Using ScrollView (loads all data at once)
-    // <ScrollView
-    //   horizontal
-    //   showsVerticalScrollIndicator={false}
-    //   style={[styles.storiesContainer]}
-    // >
-    //   {STORIES.map((story) => {
-    //     return <Story key={story.id} story={story}></Story>;
-    //   })}
-    // </ScrollView>
-  );
-};
 
 const NoPostsFound = () => {
   return (

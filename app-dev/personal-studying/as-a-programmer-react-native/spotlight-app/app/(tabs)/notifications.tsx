@@ -1,11 +1,11 @@
 import Loader from "@/components/Loader";
-import NotificationItem from "@/components/NotificationItem";
+import Notification from "@/components/Notification";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { styles } from "@/styles/notifications.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
-import { View, Text, FlatList } from "react-native";
+import { FlatList, Text, View } from "react-native";
 
 export default function Notifications() {
   const notifications = useQuery(api.notifications.getNotifications);
@@ -29,7 +29,7 @@ export default function Notifications() {
       <FlatList
         data={notifications}
         renderItem={({ item }: any) => {
-          return <NotificationItem notification={item} />;
+          return <Notification notification={item} />;
         }}
         keyExtractor={(item) => {
           return item._id;
