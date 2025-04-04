@@ -1,18 +1,16 @@
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "@/styles/feed.styles";
+import { useUser } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { View, Text, TouchableOpacity, StatusBarAnimation } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "@/constants/theme";
-import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
-import { toggleLike } from "@/convex/posts";
-import { useMutation, useQueries, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { Text, TouchableOpacity, View } from "react-native";
 import CommentsModal from "./CommentsModal";
-import { formatDistanceToNow } from "date-fns";
-import { useUser } from "@clerk/clerk-expo";
-import { CurrentRenderContext } from "@react-navigation/native";
 
 type PostProps = {
   post: {

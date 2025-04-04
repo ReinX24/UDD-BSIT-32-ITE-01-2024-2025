@@ -9,7 +9,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { Image } from "expo-image";
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
@@ -94,7 +105,6 @@ export default function Profile() {
 
           {/* ACTION BUTTONS */}
           <View style={styles.actionButtons}>
-            {/* TODO: Continue @352 - 10:13 */}
             <TouchableOpacity
               style={styles.editButton}
               onPress={() => {
@@ -107,8 +117,117 @@ export default function Profile() {
               <Ionicons name="share-outline" size={20} color={COLORS.white} />
             </TouchableOpacity>
           </View>
+          {/* END OF ACTION BUTTON */}
         </View>
+
+        {/* Show this if there are no posts */}
+        {posts.length === 0 && <NoPostsFound />}
+
+        <FlatList
+          data={posts}
+          numColumns={3}
+          scrollEnabled={false}
+          renderItem={({ item }: any) => {
+            return (
+              <TouchableOpacity
+                style={styles.gridItem}
+                onPress={() => {
+                  setSelectedPost(item);
+                }}
+              >
+                <Image
+                  source={item.imageUrl}
+                  style={styles.gridImage}
+                  contentFit="cover"
+                  transition={200}
+                />
+              </TouchableOpacity>
+            );
+          }}
+        />
       </ScrollView>
+
+      {/* EDIT PROFILE MODAL */}
+      <Modal
+        visible={isEditModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setIsModalVisible(false);
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.modalContainer}
+          >
+            {/* MODAL HEADER WITH CLOSE BUTTON */}
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Edit Profile</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsModalVisible(false);
+                  }}
+                >
+                  <Ionicons name="close" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+              </View>
+            </View>
+            {/* END OF MODAL HEADER WITH CLOSE BUTTON */}
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* END OF EDIT PROFILE MODAL */}
+
+      {/* SELECTED IMAGE MODAL */}
+      <Modal
+        visible={!!selectedPost}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          setSelectedPost(null);
+        }}
+      >
+        <View style={styles.modalBackdrop}>
+          {selectedPost && (
+            <View style={styles.postDetailContainer}>
+              <View style={styles.postDetailHeader}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedPost(null);
+                  }}
+                >
+                  <Ionicons name="close" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+              </View>
+
+              <Image
+                source={selectedPost.imageUrl}
+                cachePolicy={"memory-disk"}
+                style={styles.postDetailImage}
+              />
+            </View>
+          )}
+        </View>
+      </Modal>
+      {/* END OF SELECTED IMAGE MODAL */}
     </View>
   );
 }
+
+const NoPostsFound = () => {
+  return (
+    <View
+      style={{
+        height: "100%",
+        backgroundColor: COLORS.background,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Ionicons name="images-outline" size={48} color={COLORS.primary} />
+      <Text style={{ fontSize: 20, color: COLORS.white }}>No posts yet</Text>
+    </View>
+  );
+};
