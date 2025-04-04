@@ -17,6 +17,7 @@ import {
   Platform,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -40,7 +41,10 @@ export default function Profile() {
 
   const updateProfile = useMutation(api.users.updateProfile);
 
-  const handleSaveProfile = async () => {};
+  const handleSaveProfile = async () => {
+    await updateProfile(editedProfile);
+    setIsModalVisible(false);
+  };
 
   // If the posts are undefined, this means that they are being loaded in
   if (!currentUser || posts === undefined) {
@@ -161,8 +165,8 @@ export default function Profile() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.modalContainer}
           >
-            {/* MODAL HEADER WITH CLOSE BUTTON */}
             <View style={styles.modalContent}>
+              {/* MODAL HEADER WITH CLOSE BUTTON */}
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Edit Profile</Text>
                 <TouchableOpacity
@@ -173,8 +177,54 @@ export default function Profile() {
                   <Ionicons name="close" size={24} color={COLORS.white} />
                 </TouchableOpacity>
               </View>
+              {/* END OF MODAL HEADER WITH CLOSE BUTTON */}
+              {/* MODAL INPUTS */}
+              {/* NAME INPUT */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editedProfile.fullname}
+                  onChangeText={(text) => {
+                    setEditedProfile((prev) => {
+                      return {
+                        ...prev,
+                        fullname: text,
+                      };
+                    });
+                  }}
+                  placeholderTextColor={COLORS.grey}
+                />
+              </View>
+              {/* BIO INPUT */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Bio</Text>
+                <TextInput
+                  style={[styles.input, styles.bioInput]}
+                  value={editedProfile.bio}
+                  onChangeText={(text) => {
+                    setEditedProfile((prev) => {
+                      return {
+                        ...prev,
+                        bio: text,
+                      };
+                    });
+                  }}
+                  multiline
+                  numberOfLines={4}
+                  placeholderTextColor={COLORS.grey}
+                />
+              </View>
+              {/* END OF MODAL INPUTS */}
+              {/* SAVE BUTTON */}
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveProfile}
+              >
+                <Text style={styles.saveButtonText}>Save Changes</Text>
+              </TouchableOpacity>
+              {/* END OF SAVE BUTTON */}
             </View>
-            {/* END OF MODAL HEADER WITH CLOSE BUTTON */}
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       </Modal>
