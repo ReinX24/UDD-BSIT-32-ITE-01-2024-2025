@@ -180,7 +180,7 @@ async function updateFollowCounts(
 
     // Increments or decrements the follower count of the followed user
     await ctx.db.patch(followingId, {
-      followers: following.following + (isFollow ? 1 : -1),
+      followers: following.followers + (isFollow ? 1 : -1),
     });
   }
 }

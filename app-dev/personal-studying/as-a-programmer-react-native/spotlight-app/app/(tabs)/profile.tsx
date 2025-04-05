@@ -127,6 +127,7 @@ export default function Profile() {
         {/* Show this if there are no posts */}
         {posts.length === 0 && <NoPostsFound />}
 
+        {/* TODO: continue @353 - 20:06 */}
         <FlatList
           data={posts}
           numColumns={3}
