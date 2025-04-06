@@ -35,7 +35,6 @@ export default function Post({ post }: PostProps) {
 
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
-  const [commentsCount, setCommentsCount] = useState(post.comments);
   // The comments inside a modal are hidden by default
   const [showComments, setShowComments] = useState(false);
 
@@ -86,7 +85,14 @@ export default function Post({ post }: PostProps) {
     <View style={styles.post}>
       {/* POST HEADER */}
       <View style={styles.postHeader}>
-        <Link href={"/(tabs)/notifications"}>
+        <Link
+          href={
+            currentUser?._id === post.author._id
+              ? "/(tabs)/profile"
+              : `/user/${post.author._id}`
+          }
+          asChild
+        >
           <TouchableOpacity style={styles.postHeader}>
             <Image
               source={post.author.image}
@@ -101,7 +107,13 @@ export default function Post({ post }: PostProps) {
 
         {/* SHOW DELETE BUTTON IF OWNER */}
         {/* If I'm the owner of the post, show the delete button */}
-        {post.author._id === currentUser?._id ? (
+        {post.author._id === currentUser?._id && (
+          <TouchableOpacity onPress={handleDelete}>
+            <Ionicons name={"trash-outline"} size={20} color={COLORS.primary} />
+          </TouchableOpacity>
+        )}
+
+        {/* {post.author._id === currentUser?._id ? (
           <TouchableOpacity onPress={handleDelete}>
             <Ionicons name={"trash-outline"} size={20} color={COLORS.primary} />
           </TouchableOpacity>
@@ -113,7 +125,7 @@ export default function Post({ post }: PostProps) {
               color={COLORS.white}
             />
           </TouchableOpacity>
-        )}
+        )} */}
 
         {/* END OF SHOW DELETE BUTTON */}
       </View>
@@ -183,7 +195,7 @@ export default function Post({ post }: PostProps) {
             }}
           >
             <Text style={styles.commentText}>
-              {`View ${commentsCount == 1 ? `${commentsCount} comment` : `all ${commentsCount} comments`}`}
+              {`View ${post.comments == 1 ? `${post.comments} comment` : `all ${post.comments} comments`}`}
             </Text>
           </TouchableOpacity>
         )}
@@ -200,11 +212,6 @@ export default function Post({ post }: PostProps) {
         visible={showComments}
         onClose={() => {
           return setShowComments(false);
-        }}
-        onCommentAdded={() => {
-          setCommentsCount((prev) => {
-            return prev + 1;
-          });
         }}
       />
       {/* END OF COMMENTS MODAL */}

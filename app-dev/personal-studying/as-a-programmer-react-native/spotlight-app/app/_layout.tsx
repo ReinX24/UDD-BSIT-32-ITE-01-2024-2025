@@ -1,12 +1,12 @@
-import { COLORS } from "@/constants/theme";
-import { SafeAreaView } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import InitialLayout from "@/components/InitialLayout";
 import ClerkAndConvexProdivder from "@/providers/ClerkAndConvexProdivder";
-import { SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
-import { useCallback } from "react";
+import { SplashScreen } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useCallback, useEffect } from "react";
+import { Platform, SafeAreaView } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as NavigationBar from "expo-navigation-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,6 +22,14 @@ export default function RootLayout() {
       return await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  // Runs when the application starts, updates the navigation bar on android
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync("#000000");
+      NavigationBar.setButtonStyleAsync("light");
+    }
+  }, []);
 
   return (
     // SafeAreaProvider and SafeAreaView makes sure that the content stays

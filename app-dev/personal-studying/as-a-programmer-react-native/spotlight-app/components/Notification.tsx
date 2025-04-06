@@ -43,7 +43,6 @@ export default function Notification({ notification }: NotificationProps) {
   return (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
-        {/* TODO: fix later */}
         <Link href={`/user/${notification.sender._id}`} asChild>
           <TouchableOpacity style={styles.avatarContainer}>
             <Image
@@ -69,8 +68,7 @@ export default function Notification({ notification }: NotificationProps) {
 
         {/* NOTIFICATION INFO */}
         <View style={styles.notificationInfo}>
-          {/* TODO: fix later */}
-          <Link href={`/notifications`} asChild>
+          <Link href={`/user/${notification.sender._id}`} asChild>
             <TouchableOpacity>
               <Text style={styles.username}>
                 {notification.sender.username}
@@ -97,6 +95,7 @@ export default function Notification({ notification }: NotificationProps) {
 
       {/* SHOW POST PHOTO IF RELATED TO A POST */}
       {notification.post && (
+        // TODO: when the user clicks on the image, pop up a modal of the image
         <Image
           source={notification.post.imageUrl}
           style={styles.postImage}

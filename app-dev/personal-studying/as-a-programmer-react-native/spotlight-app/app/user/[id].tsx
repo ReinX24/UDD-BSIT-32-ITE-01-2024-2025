@@ -6,19 +6,20 @@ import { styles } from "@/styles/profile.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  View,
+  FlatList,
+  Pressable,
+  ScrollView,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Pressable,
-  FlatList,
+  View,
 } from "react-native";
 
 // For viewing profiles of other users
 export default function UserProfileScreen() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
 
   const profile = useQuery(api.users.getUserProfile, { id: id as Id<"users"> });
   const posts = useQuery(api.posts.getPostsByUser, {
@@ -31,7 +32,13 @@ export default function UserProfileScreen() {
 
   const toggleFollow = useMutation(api.users.toggleFollow);
 
-  const handleBack = () => {};
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/(tabs)/home");
+    }
+  };
 
   if (
     profile === undefined ||
