@@ -1,11 +1,12 @@
 import { COLORS } from "@/constants/theme";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { styles } from "@/styles/notifications.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 
 type NotificationProps = {
   notification: {
@@ -39,7 +40,25 @@ type NotificationProps = {
   };
 };
 
+interface Post {
+  _id: Id<"posts">;
+  imageUrl: string;
+  caption?: string;
+  likes: number;
+  comments: number;
+  _creationTime: number;
+  isLiked: boolean;
+  isBookmarked: boolean;
+  author: {
+    _id: Id<"users">;
+    username: string;
+    image: string;
+  };
+}
+
 export default function Notification({ notification }: NotificationProps) {
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
   return (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
@@ -95,14 +114,51 @@ export default function Notification({ notification }: NotificationProps) {
 
       {/* SHOW POST PHOTO IF RELATED TO A POST */}
       {notification.post && (
-        // TODO: when the user clicks on the image, pop up a modal of the image
-        <Image
-          source={notification.post.imageUrl}
-          style={styles.postImage}
-          contentFit="cover"
-          transition={200}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedPost(notification.post);
+          }}
+        >
+          <Image
+            source={notification.post.imageUrl}
+            style={styles.postImage}
+            contentFit="cover"
+            transition={200}
+          />
+        </TouchableOpacity>
       )}
+
+      {/* SHOW MODAL OF POST PHOTO */}
+      <Modal
+        visible={!!selectedPost}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => {
+          setSelectedPost(null);
+        }}
+      >
+        <View style={styles.modalBackdrop}>
+          {selectedPost && (
+            <View style={styles.postDetailContainer}>
+              <View style={styles.postDetailHeader}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedPost(null);
+                  }}
+                >
+                  <Ionicons name="close" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+              </View>
+
+              <Image
+                source={selectedPost.imageUrl}
+                cachePolicy={"memory-disk"}
+                style={styles.postDetailImage}
+              />
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }

@@ -1,6 +1,8 @@
 // styles/notifications.styles.ts
-import { StatusBar, StyleSheet } from "react-native";
+import { Dimensions, StatusBar, StyleSheet } from "react-native";
 import { COLORS } from "@/constants/theme";
+
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   container: {
@@ -84,5 +86,27 @@ export const styles = StyleSheet.create({
   centered: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  // From profile.styles.ts
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
+  },
+  postDetailContainer: {
+    backgroundColor: COLORS.background,
+    maxHeight: height * 0.9,
+  },
+  postDetailHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: COLORS.surface,
+  },
+  postDetailImage: {
+    width: width,
+    height: width,
   },
 });
