@@ -117,9 +117,9 @@ export default function Profile() {
             >
               <Text style={styles.editButtonText}>Edit Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.shareButton}>
+            {/* <TouchableOpacity style={styles.shareButton}>
               <Ionicons name="share-outline" size={20} color={COLORS.white} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           {/* END OF ACTION BUTTON */}
         </View>
