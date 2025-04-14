@@ -11,11 +11,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Index() {
-  // const { startOAuthFlow } = useOAuth({ strategy: "oauth_facebook" });
-  // const { startOAuthFlow: startGoogleOAuthFlow } = useOAuth({
-  //   strategy: "oauth_google",
-  // });
-
   const { startSSOFlow } = useSSO();
 
   const handleFacebookLogin = async () => {
