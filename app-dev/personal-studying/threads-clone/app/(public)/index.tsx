@@ -1,5 +1,8 @@
 import { COLORS } from "@/constants/COLORS";
-import { useOAuth, useSSO } from "@clerk/clerk-expo";
+import { api } from "@/convex/_generated/api";
+import { useSSO } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
 import {
   Image,
   ScrollView,
@@ -8,10 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function Index() {
   const { startSSOFlow } = useSSO();
+  const userData = useQuery(api.users.getAllUsers);
+  console.log("userData: ", userData);
 
   const handleFacebookLogin = async () => {
     try {
