@@ -14,8 +14,6 @@ import {
 
 export default function Index() {
   const { startSSOFlow } = useSSO();
-  const userData = useQuery(api.users.getAllUsers);
-  console.log("userData: ", userData);
 
   const handleFacebookLogin = async () => {
     try {
