@@ -3,6 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
+import { useRouter } from "expo-router";
 import {
   Image,
   ScrollView,
@@ -14,6 +15,7 @@ import {
 
 export default function Index() {
   const { startSSOFlow } = useSSO();
+  const router = useRouter();
 
   const handleFacebookLogin = async () => {
     try {
@@ -23,6 +25,7 @@ export default function Index() {
 
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
+        router.replace("/(auth)/(tabs)/feed");
       }
     } catch (error) {
       console.log("OAuth Error: ", error);
@@ -37,6 +40,7 @@ export default function Index() {
 
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
+        router.replace("/(auth)/(tabs)/feed");
       }
     } catch (error) {
       console.log("OAuth Error: ", error);
