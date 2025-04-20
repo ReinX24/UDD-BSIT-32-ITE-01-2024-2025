@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import {
   Image,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: "center",
     backgroundColor: COLORS.background,
+    paddingTop: StatusBar.currentHeight,
   },
   scrollViewContainer: {
     fontFamily: "DMSans_400Regular",

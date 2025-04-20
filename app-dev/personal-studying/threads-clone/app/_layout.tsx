@@ -6,8 +6,9 @@ import {
   DMSans_700Bold,
   useFonts,
 } from "@expo-google-fonts/dm-sans";
-import { Slot } from "expo-router";
+import { Slot, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
 
@@ -38,12 +39,35 @@ const InitialLayout = () => {
     DMSans_700Bold,
   });
 
+  const { isLoaded, isSignedIn } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
   useEffect(() => {
     if (fontsLoaded) {
       // Hides the splash screen once the fonts are loaded
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    // Checking if the current user is inside an auth screen
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (isSignedIn && !inAuthGroup) {
+      // If the user is signed in and they try to access a screen outside the
+      // auth screens
+      router.replace("/(auth)/(tabs)/feed");
+    } else if (!isSignedIn && inAuthGroup) {
+      // If the user tries to access a screen only for authenticated users,
+      // return to login
+      router.replace("/(public)");
+    }
+  }, [isSignedIn]);
 
   return <Slot />;
 };
@@ -54,6 +78,7 @@ export default function RootLayout() {
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <InitialLayout />
+          <StatusBar style="dark" />
         </ConvexProviderWithClerk>
       </ClerkLoaded>
     </ClerkProvider>

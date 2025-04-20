@@ -106,7 +106,7 @@ const Layout = () => {
                   signOut();
                 }}
               >
-                <Ionicons name="log-out" size={24} />
+                <Ionicons name="log-out" size={24} style={{ marginRight: 8 }} />
               </TouchableOpacity>
             );
           },

@@ -21,7 +21,6 @@ const Layout = () => {
           title: "New Thread",
           headerLeft: () => {
             // Removes back button
-            // TODO: resume @1:36:57
             return null;
           },
           headerRight: () => {
