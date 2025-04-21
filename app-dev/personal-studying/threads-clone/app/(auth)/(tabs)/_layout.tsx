@@ -74,6 +74,7 @@ const Layout = () => {
       <Tabs.Screen
         name="favorites"
         options={{
+          headerShown: false,
           title: "Favorites",
           tabBarIcon: ({ color, size, focused }) => {
             return (
@@ -89,6 +90,7 @@ const Layout = () => {
       <Tabs.Screen
         name="profile"
         options={{
+          headerShown: false,
           title: "Profile",
           tabBarIcon: ({ color, size, focused }) => {
             return (
