@@ -11,5 +11,5 @@ export function useUserProfile() {
     clerkId: clerkId,
   });
 
-  return userProfile;
+  return { userProfile };
 }
