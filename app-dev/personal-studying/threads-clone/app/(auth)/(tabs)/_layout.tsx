@@ -2,7 +2,7 @@ import { COLORS } from "@/constants/COLORS";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 const CreateTabIcon = ({ color, size }: { color: string; size: number }) => {
   return (

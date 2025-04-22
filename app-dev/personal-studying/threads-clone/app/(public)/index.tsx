@@ -1,8 +1,6 @@
 import { COLORS } from "@/constants/COLORS";
-import { api } from "@/convex/_generated/api";
 import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "convex/react";
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -13,10 +11,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Index() {
   const { startSSOFlow } = useSSO();
   const router = useRouter();
+  const { top } = useSafeAreaInsets();
 
   const handleFacebookLogin = async () => {
     try {
@@ -49,7 +49,7 @@ export default function Index() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: top }]}>
       <Image
         source={require("@/assets/images/login.png")}
         style={styles.loginImage}
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: "center",
     backgroundColor: COLORS.background,
-    paddingTop: StatusBar.currentHeight,
   },
   scrollViewContainer: {
     fontFamily: "DMSans_400Regular",
