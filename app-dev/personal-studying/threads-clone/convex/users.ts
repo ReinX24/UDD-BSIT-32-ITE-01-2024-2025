@@ -43,3 +43,18 @@ export const getUserByClerkId = query({
       .unique();
   },
 });
+
+export const getUserById = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // return await ctx.db
+    //   .query("users")
+    //   .filter((q) => {
+    //     return q.eq(q.field("_id"), args.userId);
+    //   })
+    //   .unique();
+    return await ctx.db.get(args.userId);
+  },
+});

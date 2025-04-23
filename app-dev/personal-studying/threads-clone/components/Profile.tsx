@@ -3,6 +3,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import {
   FlatList,
   StyleSheet,
@@ -11,9 +12,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import UserProfile from "./UserProfile";
 
 type ProfileProps = {
-  userId: Id<"users">;
+  userId?: Id<"users">;
   showBackButton: boolean;
 };
 
@@ -21,9 +23,11 @@ export default function Profile({
   userId,
   showBackButton = false,
 }: ProfileProps) {
+  // Getting the currently logged in user
   const { userProfile } = useUserProfile();
   const { top } = useSafeAreaInsets();
   const { signOut } = useAuth();
+  const router = useRouter();
 
   return (
     <View style={[styles.container, { paddingTop: top }]}>
@@ -40,7 +44,15 @@ export default function Profile({
           <>
             <View style={styles.header}>
               {showBackButton ? (
-                <Text>BACK</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.back();
+                  }}
+                  style={styles.backButton}
+                >
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                  <Text>Back</Text>
+                </TouchableOpacity>
               ) : (
                 <MaterialCommunityIcons name="web" size={24} />
               )}
@@ -55,6 +67,13 @@ export default function Profile({
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* If viewing different user, userId, else, userProfile which is the logged in user */}
+            {userId ? (
+              <UserProfile userId={userId} />
+            ) : (
+              <UserProfile userId={userProfile?._id} />
+            )}
           </>
         }
       />
@@ -77,5 +96,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
   },
-  headerIcons: {},
+  headerIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
 });
