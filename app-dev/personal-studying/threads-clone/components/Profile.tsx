@@ -12,10 +12,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Tabs from "./Tabs";
 import UserProfile from "./UserProfile";
 
 type ProfileProps = {
-  userId?: Id<"users">;
+  userId?: Id<"users"> | string;
   showBackButton: boolean;
 };
 
@@ -36,7 +37,11 @@ export default function Profile({
         renderItem={({ item }) => {
           return <Text>Test</Text>;
         }}
-        ListEmptyComponent={<Text>No data</Text>}
+        ListEmptyComponent={
+          <Text style={styles.tabContentText}>
+            You haven't posted anything yet
+          </Text>
+        }
         ItemSeparatorComponent={() => {
           return <View style={styles.separator} />;
         }}
@@ -68,12 +73,16 @@ export default function Profile({
               </View>
             </View>
 
-            {/* If viewing different user, userId, else, userProfile which is the logged in user */}
-            {userId ? (
-              <UserProfile userId={userId} />
-            ) : (
+            {/* If viewing different user, userId */}
+            {userId && <UserProfile userId={userId} />}
+
+            {/* Else, userProfile which is the logged in user */}
+            {!userId && userProfile && (
               <UserProfile userId={userProfile?._id} />
             )}
+
+            {/* Tabs on user screen */}
+            <Tabs onTabChange={() => {}}></Tabs>
           </>
         }
       />
@@ -105,5 +114,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  tabContentText: {
+    fontSize: 14,
+    color: COLORS.border,
+    textAlign: "center",
+    marginTop: 16,
   },
 });

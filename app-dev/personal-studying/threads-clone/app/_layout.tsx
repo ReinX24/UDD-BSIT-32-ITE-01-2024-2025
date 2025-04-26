@@ -11,7 +11,12 @@ import {
   DMSans_700Bold,
   useFonts,
 } from "@expo-google-fonts/dm-sans";
-import { Slot, useRouter, useSegments } from "expo-router";
+import {
+  Slot,
+  useNavigationContainerRef,
+  useRouter,
+  useSegments,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -119,6 +124,11 @@ const InitialLayout = () => {
 };
 
 const RootLayout = () => {
+  const ref = useNavigationContainerRef();
+  useEffect(() => {
+    navigationIntegration.registerNavigationContainer(ref);
+  }, [ref]);
+
   return (
     <ClerkProvider publishableKey={clerkPublishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
