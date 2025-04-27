@@ -4,7 +4,14 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
 import { Link } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type UserProfileProps = {
   userId?: string;
@@ -17,8 +24,6 @@ const UserProfile = ({ userId }: UserProfileProps) => {
   const { userProfile } = useUserProfile();
   const isSelf = userId === userProfile?._id;
 
-  // console.log("UserProfile - profile:", profile);
-
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -28,7 +33,10 @@ const UserProfile = ({ userId }: UserProfileProps) => {
           </Text>
           <Text style={styles.username}>@{profile?.username}</Text>
         </View>
-        <Image source={{ uri: profile?.imageUrl }} style={styles.image} />
+        <Image
+          source={{ uri: profile?.imageUrl as string }}
+          style={styles.image}
+        />
       </View>
       <Text style={styles.bio}>{profile?.bio || "No bio"}</Text>
       <Text>
@@ -40,11 +48,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
         {isSelf && (
           <>
             <Link
-              href={`/edit-profile?
-                userId=${profile?._id ? encodeURIComponent(profile._id) : ""}
-                &imageUrl=${profile?.imageUrl ? encodeURIComponent(profile.imageUrl) : ""}
-                &bioString=${profile?.bio ? encodeURIComponent(profile.bio) : ""}
-                &linkString=${profile?.websiteUrl ? encodeURIComponent(profile.websiteUrl) : ""}`}
+              href={`/edit-profile?userId=${profile?._id}&imageUrl=${profile?.imageUrl ? encodeURIComponent(profile.imageUrl) : ""}&bioString=${profile?.bio ? encodeURIComponent(profile.bio) : ""}&linkString=${profile?.websiteUrl ? encodeURIComponent(profile.websiteUrl) : ""}`}
               asChild
             >
               <TouchableOpacity style={styles.button}>

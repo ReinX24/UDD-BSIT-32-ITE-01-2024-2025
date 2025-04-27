@@ -20,11 +20,11 @@ const Layout = () => {
         name="(modal)/create"
         options={{
           presentation: "modal",
+          headerTitleAlign: "center",
           title: "New Thread",
-          headerLeft: () => {
-            // Removes back button
-            return null;
-          },
+          // headerLeft: () => {
+          //   return null;
+          // },
           headerRight: () => {
             return (
               <TouchableOpacity>
@@ -38,12 +38,9 @@ const Layout = () => {
         name="(modal)/edit-profile"
         options={{
           presentation: "modal",
+          headerTitleAlign: "center",
           title: "Edit Profile",
           headerLeft: () => {
-            // Removes back button
-            return null;
-          },
-          headerRight: () => {
             return (
               <TouchableOpacity
                 onPress={() => {

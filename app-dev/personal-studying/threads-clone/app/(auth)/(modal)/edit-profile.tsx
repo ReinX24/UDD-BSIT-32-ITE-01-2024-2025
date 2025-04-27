@@ -1,26 +1,164 @@
-import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { COLORS } from "@/constants/COLORS";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ImagePickerAsset } from "expo-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 const EditProfile = () => {
-  const {
-    bioString: bioString,
-    linkString: linkstring,
-    userId,
-    imageUrl,
-  } = useLocalSearchParams<{
+  const { bioString, linkString, userId, imageUrl } = useLocalSearchParams<{
     bioString: string;
     linkString: string;
     userId: string;
     imageUrl: string;
   }>();
 
+  const [bio, setBio] = useState(bioString);
+  const [link, setLink] = useState(linkString);
+  const updateUser = useMutation(api.users.updateUser);
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl);
+
+  const router = useRouter();
+  const [selectedImage, setSelectedImage] = useState<ImagePickerAsset | null>(
+    null
+  );
+
+  const onDone = async () => {
+    let storageId = null;
+
+    if (selectedImage) {
+      storageId = await updateProfilePicture();
+    }
+
+    const toUpdate: any = {
+      _id: userId as Id<"users">,
+      bio: bio,
+      websiteUrl: link,
+    };
+
+    if (storageId) {
+      toUpdate.imageUrl = storageId as Id<"_storage">;
+    }
+
+    await updateUser(toUpdate);
+
+    router.dismiss();
+  };
+
+  const updateProfilePicture = async () => {
+    const uploadUrl = await generateUploadUrl();
+
+    const response = await fetch(selectedImage!.uri);
+    const blob = await response.blob();
+
+    // Saves the image to convex files storage
+    const result = await fetch(uploadUrl, {
+      method: "POST",
+      body: blob,
+      headers: {
+        "Content-Type": selectedImage!.mimeType!,
+      },
+    });
+
+    const { storageId } = await result.json();
+
+    return storageId;
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0]);
+    }
+  };
+
   return (
     <View>
-      <Text>edit-profile</Text>
+      <Stack.Screen
+        options={{
+          headerRight: () => {
+            return (
+              <TouchableOpacity onPress={onDone}>
+                <Text>Done</Text>
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
+
+      <TouchableOpacity onPress={pickImage}>
+        {selectedImage ? (
+          // Show picked image
+          <Image source={{ uri: selectedImage.uri }} style={styles.image} />
+        ) : (
+          // Show current image
+          <Image source={{ uri: imageUrl }} style={styles.image} />
+        )}
+      </TouchableOpacity>
+      <View style={styles.section}>
+        <Text style={styles.label}>Bio</Text>
+        <TextInput
+          value={bio}
+          onChangeText={setBio}
+          style={styles.bioInput}
+          multiline
+          numberOfLines={4}
+          textAlignVertical="top"
+          placeholder="Tell us about yourself"
+        ></TextInput>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Link</Text>
+        <TextInput
+          value={link}
+          onChangeText={setLink}
+          placeholder="https://www.example.com"
+          autoCapitalize="none"
+        />
+      </View>
     </View>
   );
 };
 
 export default EditProfile;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 100,
+    alignSelf: "center",
+  },
+  section: {
+    marginBottom: 16,
+    borderColor: COLORS.border,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
+    margin: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  bioInput: {
+    height: 100,
+  },
+});
