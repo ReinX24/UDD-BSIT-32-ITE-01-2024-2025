@@ -79,6 +79,7 @@ export const updateUser = mutation({
 
     // If a new image is chosen, delete the old imageUrl
     if (args.imageUrl) {
+      // Get the user by their id
       const user = await ctx.db
         .query("users")
         .filter((q) => {
@@ -86,6 +87,7 @@ export const updateUser = mutation({
         })
         .unique();
 
+      // Delete the existing imageUrl of the user
       await ctx.storage.delete(user?.imageUrl as Id<"_storage">);
     }
 
