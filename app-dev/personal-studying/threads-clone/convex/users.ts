@@ -5,7 +5,7 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 export const getAllUsers = query({
   args: {},
@@ -41,12 +41,14 @@ export const getUserByClerkId = query({
     clerkId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const user = await ctx.db
       .query("users")
       .filter((q) => {
         return q.eq(q.field("clerkId"), args.clerkId);
       })
       .unique();
+
+    return getUserWithImageUrl(ctx, user);
   },
 });
 
@@ -61,7 +63,8 @@ export const getUserById = query({
     //     return q.eq(q.field("_id"), args.userId);
     //   })
     //   .unique();
-    return getUserWithImageUrl(ctx, args.userId);
+    const user = await ctx.db.get(args.userId);
+    return getUserWithImageUrl(ctx, user);
   },
 });
 
@@ -104,9 +107,10 @@ export const generateUploadUrl = mutation({
 });
 
 // REUSABLE FUNCTIONS
-const getUserWithImageUrl = async (ctx: QueryCtx, userId: Id<"users">) => {
-  const user = await ctx.db.get(userId);
-
+const getUserWithImageUrl = async (
+  ctx: QueryCtx,
+  user: Doc<"users"> | null
+) => {
   // If the user does not have an uploaded photo in convex
   if (!user?.imageUrl || user.imageUrl.startsWith("http")) {
     return user;
