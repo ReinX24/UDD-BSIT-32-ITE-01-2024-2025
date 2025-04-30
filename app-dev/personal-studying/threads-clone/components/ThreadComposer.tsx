@@ -1,15 +1,16 @@
+import { COLORS } from "@/constants/COLORS";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { addThreadMessage } from "@/convex/messages";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMutation } from "convex/react";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Image,
-  ImageSourcePropType,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -51,6 +52,10 @@ const ThreadComposer = ({
     // TODO
   };
 
+  function selectImage(type: "library" | "camera") {
+    console.log(type);
+  }
+
   return (
     <View>
       <Stack.Screen
@@ -65,10 +70,60 @@ const ThreadComposer = ({
         }}
       />
       <View style={styles.topRow}>
-        <Image
-          source={{ uri: userProfile?.imageUrl as string }}
-          style={styles.avatar}
-        />
+        {userProfile && (
+          <Image
+            source={{ uri: userProfile?.imageUrl as string }}
+            style={styles.avatar}
+          />
+        )}
+        <View style={styles.centerContainer}>
+          <Text style={styles.name}>
+            {userProfile?.first_name} {userProfile?.last_name}
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder={isReply ? "Reply to thread" : "What's new?"}
+            value={threadContent}
+            onChangeText={setThreadContent}
+            multiline
+            autoFocus={!isPreview}
+          />
+
+          <View style={styles.iconRow}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => selectImage("library")}
+            >
+              <Ionicons name="images-outline" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => selectImage("camera")}
+            >
+              <Ionicons name="camera-outline" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <MaterialIcons name="gif" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="mic-outline" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <FontAwesome6 name="hashtag" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons
+                name="stats-chart-outline"
+                size={24}
+                color={COLORS.border}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <TouchableOpacity style={[styles.cancelButton]} onPress={removeThread}>
+          <Ionicons name="send" size={24} color={COLORS.border} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -81,10 +136,37 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    marginBottom: 16,
+    padding: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.border,
   },
   avatar: {
     width: 44,
     height: 44,
     borderRadius: 22,
+    alignSelf: "flex-start",
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  centerContainer: {
+    flex: 1,
+  },
+  input: {
+    fontSize: 16,
+    maxHeight: 100,
+  },
+  iconRow: {
+    flexDirection: "row",
+    paddingVertical: 12,
+  },
+  iconButton: {
+    marginRight: 16,
+  },
+  cancelButton: {
+    marginLeft: 12,
+    alignSelf: "flex-start",
   },
 });
