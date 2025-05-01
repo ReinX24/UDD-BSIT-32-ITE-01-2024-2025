@@ -1,7 +1,10 @@
 import { View, Text, Button } from "react-native";
 import * as Sentry from "@sentry/react-native";
+import { useAuth } from "@clerk/clerk-expo";
 
 const FeedIndex = () => {
+  const { signOut } = useAuth();
+
   const testError = () => {
     try {
       throw new Error("Test Error");
@@ -24,6 +27,12 @@ const FeedIndex = () => {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Feed Index</Text>
       <Button onPress={testError} title="Test Error" />
+      <Button
+        onPress={() => {
+          signOut();
+        }}
+        title="Sign Out"
+      />
     </View>
   );
 };
