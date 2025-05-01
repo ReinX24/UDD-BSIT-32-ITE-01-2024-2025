@@ -1,6 +1,7 @@
 import { View, Text, Button } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import { useAuth } from "@clerk/clerk-expo";
+import { Redirect } from "expo-router";
 
 const FeedIndex = () => {
   const { signOut } = useAuth();
