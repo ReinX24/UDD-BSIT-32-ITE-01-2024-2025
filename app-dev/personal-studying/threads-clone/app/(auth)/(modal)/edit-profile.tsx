@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { ImagePickerAsset } from "expo-image-picker";
 import * as ImagePicker from "expo-image-picker";
+import { StatusBar } from "expo-status-bar";
 
 const EditProfile = () => {
   const { bioString, linkString, userId, imageUrl } = useLocalSearchParams<{
@@ -89,6 +90,7 @@ const EditProfile = () => {
 
   return (
     <View>
+      <StatusBar hidden />
       <Stack.Screen
         options={{
           headerRight: () => {

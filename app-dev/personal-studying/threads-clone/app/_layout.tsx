@@ -97,17 +97,18 @@ const InitialLayout = () => {
 
     // Checking if the current user is inside an auth screen
     const inAuthGroup = segments[0] === "(auth)";
+    const inPublicGroup = segments[0] === "(public)";
 
     if (isSignedIn && !inAuthGroup) {
       // If the user is signed in and they try to access a screen outside the
       // auth screens
       router.replace("/(auth)/(tabs)/feed");
-    } else if (!isSignedIn && inAuthGroup) {
+    } else if (!isSignedIn && !inPublicGroup) {
       // If the user tries to access a screen only for authenticated users,
       // return to login
       router.replace("/(public)");
     }
-  }, [isSignedIn]);
+  }, [isLoaded, isSignedIn]);
 
   useEffect(() => {
     if (user && user.user) {
