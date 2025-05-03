@@ -13,12 +13,15 @@ import {
   InputAccessoryView,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ImagePickerAsset, ImagePickerOptions } from "expo-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 type ThreadComposerProps = {
   isPreview?: boolean;
@@ -34,14 +37,19 @@ const ThreadComposer = ({
   const router = useRouter();
   const [threadContent, setThreadContent] = useState("");
   const { userProfile } = useUserProfile();
-  const [mediaFiles, setMediaFiles] = useState<string[]>();
+  const [mediaFiles, setMediaFiles] = useState<ImagePickerAsset[]>([]);
   const addThread = useMutation(api.messages.addThreadMessage);
   const inputAccessoryViewID = "uniqueId";
 
+  const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
+
   const handleSubmit = async () => {
+    const mediaIds = await Promise.all(mediaFiles.map(uploadMediaFile));
+
     addThread({
       threadId,
       content: threadContent,
+      mediaFiles: mediaIds,
     });
 
     setThreadContent("");
@@ -74,9 +82,39 @@ const ThreadComposer = ({
     ]);
   };
 
-  function selectImage(type: "library" | "camera") {
-    console.log(type);
-  }
+  const selectImage = async (type: "library" | "camera") => {
+    const options: ImagePickerOptions = {
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+    };
+
+    let result;
+
+    if (type === "library") {
+      result = await ImagePicker.launchImageLibraryAsync(options);
+    } else {
+      result = await ImagePicker.launchCameraAsync(options);
+    }
+
+    if (!result.canceled) {
+      setMediaFiles([result.assets[0], ...mediaFiles]);
+    }
+  };
+
+  const uploadMediaFile = async (image: ImagePickerAsset) => {
+    // Uploading image to convex
+    const uploadUrl = await generateUploadUrl();
+    const response = await fetch(image.uri);
+    const blob = await response.blob();
+    const result = await fetch(uploadUrl, {
+      method: "POST",
+      body: blob,
+      headers: { "Content-Type": image.mimeType! },
+    });
+    const { storageId } = await result.json();
+    return storageId;
+  };
 
   return (
     <View>
@@ -113,6 +151,32 @@ const ThreadComposer = ({
             autoFocus={!isPreview}
             inputAccessoryViewID={inputAccessoryViewID}
           />
+          {mediaFiles.length > 0 && (
+            <ScrollView horizontal>
+              {mediaFiles.map((file, index) => {
+                return (
+                  <View style={styles.mediaContainer} key={index}>
+                    <Image
+                      source={{ uri: file.uri }}
+                      style={styles.mediaImage}
+                    />
+                    <TouchableOpacity
+                      style={styles.deleteIconContainer}
+                      onPress={() => {
+                        setMediaFiles(
+                          mediaFiles.filter((_, i) => {
+                            return i !== index;
+                          })
+                        );
+                      }}
+                    >
+                      <Ionicons name="close" size={24} color={"#fff"} />
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </ScrollView>
+          )}
 
           <View style={styles.iconRow}>
             <TouchableOpacity
@@ -155,7 +219,7 @@ const ThreadComposer = ({
           ]}
           onPress={removeThread}
         >
-          <Ionicons name="close" size={24} color={COLORS.border} />
+          <Ionicons name="close" size={16} color={COLORS.border} />
         </TouchableOpacity>
       </View>
 
@@ -235,5 +299,24 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  mediaContainer: {
+    marginRight: 10,
+    marginTop: 10,
+  },
+  mediaImage: {
+    width: 100,
+    height: 200,
+    borderRadius: 6,
+    marginRight: 10,
+    marginTop: 10,
+  },
+  deleteIconContainer: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 2,
+    borderRadius: 12,
   },
 });

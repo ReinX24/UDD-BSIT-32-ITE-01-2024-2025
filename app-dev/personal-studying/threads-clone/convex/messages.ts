@@ -26,3 +26,11 @@ export const addThreadMessage = mutation({
     }
   },
 });
+
+export const generateUploadUrl = mutation({
+  handler: async (ctx) => {
+    // Checking if the current user is authenticated or logged in
+    await getCurrentUserOrThrow(ctx);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
