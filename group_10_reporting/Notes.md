@@ -71,12 +71,18 @@ END //
 DELIMITER ;
 ```
 
+Calling the Stored Procedure
+
+`CALL CheckIfEmployeeIT('John Smith');`
+
+Checking Stored Procedure parameters
+
+`SELECT * FROM information_schema.parameters WHERE SPECIFIC_NAME = 'CheckIfEmployeeIT';`
+
 Stored Procedure for checking the salary of the employee.
 
 ```
--- The delimiter is to change the ; into //, for creating statements in our stored procedure
 DELIMITER //
--- IN means that this takes a parameter to be used in the procedure
 CREATE PROCEDURE CheckSalary(IN emp_id INT)
 BEGIN
   DECLARE emp_salary DECIMAL(10,2);
@@ -110,11 +116,28 @@ Using the Stored Procedure
 
 ### Creating a Stored Procedure with CASE Statement
 
+Stored Procedure for checking the department of the Employee
+
 ```
 DELIMITER //
-CREATE
--- TODO: create simple stored procedure with CASE Statement
-END //
+CREATE PROCEDURE GetEmployeeDepartment(IN emp_id INT)
+  BEGIN
+  DECLARE emp_dept VARCHAR(64);
+  DECLARE result VARCHAR(64);
+
+  SELECT department INTO emp_dept FROM employees WHERE id = emp_id;
+
+  SET result = CASE
+    WHEN emp_dept = 'IT' THEN 'Employee belongs to the IT department.'
+    WHEN emp_dept = 'HR' THEN 'Employee belongs to the HR department.'
+    WHEN emp_dept = 'Sales' THEN 'Employee belongs to the Sales department.'
+    WHEN emp_dept = 'Marketing' THEN 'Employee belongs to the Marketing department.'
+    ELSE 'New Hire'
+  END;
+
+  SELECT result;
+
+  END //
 DELIMITER ;
 ```
 
@@ -123,129 +146,209 @@ Stored Procedure for checking the level of the Employee
 ```
 DELIMITER //
 CREATE PROCEDURE GetEmployeeLevel(IN emp_id INT)
-BEGIN
-DECLARE emp_years INT;
-DECLARE emp_level VARCHAR(20);
-
-    SELECT TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) INTO emp_years
-    FROM employees WHERE id = emp_id;
-
-    SET emp_level = CASE
-        WHEN emp_years >= 5 THEN 'Senior'
-        WHEN emp_years >= 3 THEN 'Mid-level'
-        WHEN emp_years >= 1 THEN 'Junior'
-        ELSE 'New Hire'
-    END;
-
-    SELECT CONCAT('Employee #', emp_id, ' is a ', emp_level, ' employee') AS result;
-
-END //
-DELIMITER ;
-```
-
-- Using the Stored Procedure
-  CALL GetEmployeeLevel(4);
-
-- While Loop
-  DELIMITER //
-  CREATE PROCEDURE GenerateSalaryIncrements(IN dept_name VARCHAR(50), IN increment_percent DECIMAL(5,2))
   BEGIN
-  DECLARE done INT DEFAULT FALSE;
-  DECLARE emp_id INT;
-  DECLARE emp_salary DECIMAL(10,2);
-  DECLARE cur CURSOR FOR SELECT id, salary FROM employees WHERE department = dept_name;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  DECLARE emp_years INT;
+  DECLARE emp_level VARCHAR(20);
 
-      OPEN cur;
+  SELECT TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) INTO emp_years
+  FROM employees WHERE id = emp_id;
 
-      read_loop: WHILE NOT done DO
-          FETCH cur INTO emp_id, emp_salary;
-          IF NOT done THEN
-              UPDATE employees
-              SET salary = salary * (1 + increment_percent/100)
-              WHERE id = emp_id;
-
-              SELECT CONCAT('Updated salary for employee #', emp_id,
-                           ' from $', emp_salary,
-                           ' to $', emp_salary * (1 + increment_percent/100)) AS update_message;
-          END IF;
-      END WHILE;
-
-      CLOSE cur;
-
-  END //
-  DELIMITER ;
-
-- Using the Stored Procedure
-  CALL GenerateSalaryIncrements('IT', 5.0);
-
-- Handling Errors and Exception Handling
-
-- Error Handling with CONTINUE HANDLER
-  DELIMITER //
-  CREATE PROCEDURE SafeEmployeeLookup(IN emp_id INT)
-  BEGIN
-  DECLARE emp_name VARCHAR(100);
-  DECLARE emp_salary DECIMAL(10,2);
-  DECLARE CONTINUE HANDLER FOR NOT FOUND
-  BEGIN
-  SELECT CONCAT('Employee with ID ', emp_id, ' not found') AS message;
+  SET emp_level = CASE
+    WHEN emp_years >= 5 THEN 'Senior'
+    WHEN emp_years >= 3 THEN 'Mid-level'
+    WHEN emp_years >= 1 THEN 'Junior'
+    ELSE 'New Hire'
   END;
 
-      SELECT name, salary INTO emp_name, emp_salary FROM employees WHERE id = emp_id;
-
-      IF emp_name IS NOT NULL THEN
-          SELECT CONCAT('Employee found: ', emp_name, ' with salary $', emp_salary) AS message;
-      END IF;
+  SELECT CONCAT('Employee #', emp_id, ' is a ', emp_level, ' employee') AS result;
 
   END //
-  DELIMITER ;
-
-- Test with existing and non-existing IDs
-  CALL SafeEmployeeLookup(2);
-  CALL SafeEmployeeLookup(99);
-
-- Handling SQL Warnings and Errors with GET DIAGNOSTICS
-
-DELIMITER //
-CREATE PROCEDURE ProcessTransaction(
-IN p_account_id INT,
-IN p_amount DECIMAL(10,2),
-IN p_type VARCHAR(20)
-)
-BEGIN
-DECLARE EXIT HANDLER FOR SQLEXCEPTION
-BEGIN
-GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
-@errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-SELECT CONCAT('Error ', @errno, ' (', @sqlstate, '): ', @text) AS error_message;
-ROLLBACK;
-END;
-
-    DECLARE EXIT HANDLER FOR SQLWARNING
-    BEGIN
-        SELECT 'Warning occurred - transaction rolled back' AS message;
-        ROLLBACK;
-    END;
-
-    START TRANSACTION;
-
-    -- Attempt to insert transaction
-    INSERT INTO account_transactions (account_id, amount, transaction_type)
-    VALUES (p_account_id, p_amount, p_type);
-
-    -- Update some account balance (simulated)
-    SELECT CONCAT('Processed ', p_type, ' of $', p_amount, ' for account ', p_account_id) AS message;
-
-    COMMIT;
-
-END //
 DELIMITER ;
-
--- Test the procedure
-CALL ProcessTransaction(101, 250.00, 'deposit'); -- Valid
-CALL ProcessTransaction(999, -100.00, 'withdrawal'); -- Should cause error
-
 ```
 
+Using the Stored Procedure
+
+`CALL GetEmployeeLevel(4);`
+
+### Creating a Stored Procedure with a WHILE LOOP
+
+Get first 3 records in the employees table
+
+```
+DELIMITER //
+CREATE PROCEDURE GetFirstThreeEmployees()
+  BEGIN
+  DECLARE count INT(11) DEFAULT 0;
+
+  WHILE count < 3 DO
+    SELECT * FROM employees LIMIT 1 OFFSET count;
+    SET count = count + 1;
+  END WHILE;
+
+  END //
+DELIMITER ;
+```
+
+Using the Stored Procedure with the WHILE LOOP
+
+`CALL GetFirstThreeEmployees();`
+
+Raise all IT employees a 5% raise until average salary reaches 65,000
+
+```
+DELIMITER //
+CREATE PROCEDURE RaiseITSalaries()
+  BEGIN
+  DECLARE avg_salary DECIMAL(10,2);
+
+  -- Calculate initial average
+  SELECT AVG(salary) INTO avg_salary FROM employees WHERE department = 'IT';
+
+  WHILE avg_salary < 65000 DO
+    -- Give 5% raise
+    UPDATE employees
+    SET salary = salary * 1.05
+    WHERE department = 'IT';
+
+    -- Recalculate average
+    SELECT AVG(salary) INTO avg_salary FROM employees WHERE department = 'IT';
+
+    SELECT CONCAT('New average IT salary: $', ROUND(avg_salary, 2)) AS message;
+  END WHILE;
+
+  SELECT CONCAT ('Target average salary reached! New Average: ', avg_salary) AS final_message;
+END //
+DELIMITER ;
+```
+
+Using the Stored Procedure with a WHILE LOOP
+
+`CALL RaiseITSalaries();`
+
+### Creating a Stored Procedure with a LOOP
+
+Getting the employee names and salaries until it is less than 50000
+
+```
+DELIMITER //
+CREATE PROCEDURE PrintEmployeesUntilLowSalary()
+BEGIN
+  DECLARE counter INT DEFAULT 1;
+  DECLARE emp_name VARCHAR(100);
+  DECLARE emp_salary DECIMAL(10,2);
+
+  my_loop: LOOP
+      SELECT name, salary INTO emp_name, emp_salary
+      FROM employees WHERE id = counter;
+
+      IF emp_salary < 50000 THEN
+          SELECT CONCAT('Stopping at ', emp_name, ' with low salary: $', emp_salary) AS message;
+          LEAVE my_loop;
+      END IF;
+
+      SELECT CONCAT('Processing: ', emp_name, ' ($', emp_salary, ')') AS message;
+
+      SET counter = counter + 1;
+
+      IF counter > (SELECT COUNT(*) FROM employees) THEN
+          LEAVE my_loop;
+      END IF;
+  END LOOP;
+END //
+DELIMITER ;
+```
+
+Using the Stored Procedure with LOOP
+
+`CALL RaiseITSalaries();`
+
+### Creating a Stored Procedure with REPEAT
+
+```
+DELIMITER //
+CREATE PROCEDURE GiveBonusesUntilCondition()
+BEGIN
+  DECLARE high_earners INT;
+
+  REPEAT
+    UPDATE employees
+    SET salary = salary + 1000
+    WHERE salary = (SELECT MIN(salary) FROM employees);
+
+    SELECT COUNT(*) INTO high_earners FROM employees WHERE salary > 60000;
+
+    SELECT CONCAT('High earners count: ', high_earners) AS message;
+
+    UNTIL high_earners >= 3
+  END REPEAT;
+
+  SELECT 'At least 3 high earners now!' as final_message;
+END //
+DELIMITER ;
+```
+
+### Error Handling using DECLARE CONTINUE HANDLER
+
+```
+DELIMITER //
+CREATE PROCEDURE GetEmployeeSalary(IN emp_id INT)
+BEGIN
+  DECLARE emp_salary DECIMAL(10,2);
+  DECLARE emp_name VARCHAR(100);
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND
+  BEGIN
+    SELECT CONCAT('Employee ID ', emp_id, ' not found') AS message;
+  END;
+
+  SELECT name, salary INTO emp_name, emp_salary
+  FROM employees WHERE id = emp_id;
+
+  IF emp_name IS NOT NULL THEN
+    SELECT CONCAT(emp_name, ' earns $', emp_salary) AS salary_info;
+  END IF;
+END //
+DELIMITER ;
+```
+
+Using the GetEmployeeSalary procedure
+
+```
+CALL GetEmployeeSalary(2); -- Exists (Sarah Johnson)
+CALL GetEmployeeSalary(99); -- Doesn't exist
+```
+
+### Error handling specific SQL Errors
+
+```
+DELIMITER //
+CREATE PROCEDURE AddEmployee(
+  IN new_id INT,
+  IN new_name VARCHAR(100),
+  IN new_salary DECIMAL(10,2),
+  IN new_dept VARCHAR(50)
+)
+BEGIN
+  -- Handlers for specific error codes
+
+  -- Duplicate key error
+  DECLARE EXIT HANDLER FOR 1062
+  BEGIN
+    SELECT CONCAT('Error: Employee ID ', new_id, ' already exists') AS message;
+  END;
+
+  -- Attempt the insert
+  INSERT INTO employees (id, name, salary, department, hire_date)
+  VALUES (new_id, new_name, new_salary, new_dept, CURDATE());
+
+  SELECT 'Employee added successfully!' AS message;
+END //
+DELIMITER ;
+```
+
+Using the AddEmployee procedure
+
+```
+CALL AddEmployee(6, 'Lisa Chen', 58000, 'IT'); -- Success
+CALL AddEmployee(1, 'Duplicate', 50000, 'HR'); -- Fails (ID 1 exists)
 ```
