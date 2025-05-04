@@ -225,6 +225,8 @@ Using the Stored Procedure with a WHILE LOOP
 
 `CALL RaiseITSalaries();`
 
+## Loops (WHILE, LOOP, REPEAT)
+
 ### Creating a Stored Procedure with a LOOP
 
 Getting the employee names and salaries until it is less than 50000
@@ -286,6 +288,8 @@ BEGIN
 END //
 DELIMITER ;
 ```
+
+## Handling Errors and Exception Handling
 
 ### Error Handling using DECLARE CONTINUE HANDLER
 
@@ -352,3 +356,50 @@ Using the AddEmployee procedure
 CALL AddEmployee(6, 'Lisa Chen', 58000, 'IT'); -- Success
 CALL AddEmployee(1, 'Duplicate', 50000, 'HR'); -- Fails (ID 1 exists)
 ```
+
+## Activities
+
+### IF CASE
+
+Get employee and check if they belong to the 'Sales' department
+
+```
+DELIMITER //
+CREATE PROCEDURE GetSalesEmployees(IN emp_id INT)
+BEGIN
+  DECLARE emp_dept VARCHAR(20);
+
+  SELECT department INTO emp_dept FROM employees WHERE id = emp_id;
+
+  IF emp_dept = 'Sales' THEN
+    SELECT 'Employee is in the sales department.' as message;
+  ELSE
+    SELECT 'Employee is NOT in the sales department.' as message;
+  END IF;
+END //
+DELIMITER ;
+```
+
+### LOOPS (WHILE, LOOP, REPEAT)
+
+Loop through the last 3 records in the employees table
+
+```
+DELIMITER //
+CREATE PROCEDURE GetLastThreeEmployees()
+BEGIN
+  DECLARE count INT DEFAULT 0;
+
+  WHILE count < 3 DO
+    SELECT * FROM employees ORDER BY id DESC LIMIT 1 OFFSET count;
+    SET count = count + 1;
+  END WHILE;
+END //
+DELIMITER ;
+```
+
+### EXCEPTION HANDLING
+
+### TRANSACTIONS IN STORED PROCEDURES
+
+### MODIFYING AND DELETING STORED PROCEDURES
