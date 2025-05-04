@@ -47,9 +47,9 @@ VALUES
 
 ## Control Statements (IF CASE)
 
-#### Creating a Storeed Procedure with an IF Statement
+#### Creating a Stored Procedure with an IF Statement
 
-Stored Procedure for checking the the employee is in the IT department.
+Stored Procedure for checking if the employee is in the IT department.
 
 ```
 -- The delimiter is to change the ; into //, for creating statements in our stored procedure
@@ -57,8 +57,8 @@ DELIMITER //
 -- IN means that this takes a parameter to be used in the procedure
 CREATE PROCEDURE CheckIfEmployeeIT(IN emp_name VARCHAR(64))
 BEGIN
-DECLARE emp_salary DECIMAL(10, 2);
-DECLARE emp_department VARCHAR(50);
+  DECLARE emp_salary DECIMAL(10, 2);
+  DECLARE emp_department VARCHAR(50);
 
   SELECT salary, department INTO emp_salary, emp_department FROM employees WHERE name = emp_name;
 
@@ -71,43 +71,56 @@ END //
 DELIMITER ;
 ```
 
+Stored Procedure for checking the salary of the employee.
+
+```
 -- The delimiter is to change the ; into //, for creating statements in our stored procedure
 DELIMITER //
 -- IN means that this takes a parameter to be used in the procedure
 CREATE PROCEDURE CheckSalary(IN emp_id INT)
 BEGIN
-DECLARE emp_salary DECIMAL(10,2);
-DECLARE emp_name VARCHAR(100);
+  DECLARE emp_salary DECIMAL(10,2);
+  DECLARE emp_name VARCHAR(100);
 
-    SELECT salary, name INTO emp_salary, emp_name FROM employees WHERE id = emp_id;
+  SELECT salary, name INTO emp_salary, emp_name FROM employees WHERE id = emp_id;
 
-    IF emp_salary > 60000 THEN
-        SELECT CONCAT(emp_name, ' has a high salary: $', emp_salary) AS message;
-    ELSEIF emp_salary > 50000 THEN
-        SELECT CONCAT(emp_name, ' has a medium salary: $', emp_salary) AS message;
-    ELSE
-        SELECT CONCAT(emp_name, ' has a low salary: $', emp_salary) AS message;
-    END IF;
+  IF emp_salary > 60000 THEN
+    SELECT CONCAT(emp_name, ' has a high salary: $', emp_salary) AS message;
+  ELSEIF emp_salary > 50000 THEN
+    SELECT CONCAT(emp_name, ' has a medium salary: $', emp_salary) AS message;
+  ELSE
+    SELECT CONCAT(emp_name, ' has a low salary: $', emp_salary) AS message;
+  END IF;
 
 END //
 DELIMITER ;
+```
 
-- Showing the Stored Procedure
-  SHOW PROCEDURE STATUS;
+Showing the Stored Procedure
 
-- Dropping the Stored Procedure
-  DROP PROCEDURE CheckSalary;
+`SHOW PROCEDURE STATUS;`
 
-- Using the Stored Procedure
-  CALL CheckSalary(1);
+Dropping the Stored Procedure
 
-- CASE Statement
+`DROP PROCEDURE CheckSalary;`
 
+Using the Stored Procedure
+
+`CALL CheckSalary(1);`
+
+### Creating a Stored Procedure with CASE Statement
+
+```
 DELIMITER //
 CREATE
+-- TODO: create simple stored procedure with CASE Statement
 END //
 DELIMITER ;
+```
 
+Stored Procedure for checking the level of the Employee
+
+```
 DELIMITER //
 CREATE PROCEDURE GetEmployeeLevel(IN emp_id INT)
 BEGIN
@@ -128,6 +141,7 @@ DECLARE emp_level VARCHAR(20);
 
 END //
 DELIMITER ;
+```
 
 - Using the Stored Procedure
   CALL GetEmployeeLevel(4);
@@ -231,3 +245,7 @@ DELIMITER ;
 -- Test the procedure
 CALL ProcessTransaction(101, 250.00, 'deposit'); -- Valid
 CALL ProcessTransaction(999, -100.00, 'withdrawal'); -- Should cause error
+
+```
+
+```
