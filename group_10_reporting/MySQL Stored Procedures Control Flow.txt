@@ -1,0 +1,214 @@
+MySQL Stored Procedures: Control Flow and Transactions
+
+Employees Table
+
+CREATE TABLE employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    salary DECIMAL(10,2) NOT NULL,
+    department VARCHAR(50),
+    hire_date DATE
+);
+
+INSERT INTO employees (name, salary, department, hire_date) VALUES
+('John Smith', 75000.00, 'IT', '2020-01-15'),
+('Sarah Johnson', 55000.00, 'HR', '2019-05-22'),
+('Michael Brown', 48000.00, 'Sales', '2021-03-10'),
+('Emily Davis', 62000.00, 'IT', '2018-11-05'),
+('David Wilson', 52000.00, 'Marketing', '2022-02-18');
+
+Transactions Table
+
+CREATE TABLE account_transactions (
+    transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+    account_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    transaction_type ENUM('deposit', 'withdrawal') NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'pending'
+);
+
+INSERT INTO account_transactions (account_id, amount, transaction_type, status) VALUES
+(101, 500.00, 'deposit', 'completed'),
+(102, 300.00, 'withdrawal', 'completed'),
+(101, 200.00, 'withdrawal', 'completed'),
+(103, 1000.00, 'deposit', 'completed'),
+(102, 150.00, 'deposit', 'completed');
+
+* Control Statements (IF CASE)
+
+* Creating a Stored Procedure
+* IF Statement
+
+DELIMITER //
+CREATE PROCEDURE CheckIfEmployeeIT(IN emp_name VARCHAR(64))
+BEGIN
+   	DECLARE emp_salary DECIMAL(10, 2);
+	DECLARE emp_department VARCHAR(50);
+
+	SELECT salary, department INTO emp_salary, emp_department FROM employees WHERE name = emp_name;
+
+	IF emp_department = 'IT' THEN
+        	SELECT CONCAT ('Name: ', emp_name, ' - Salary: ', emp_salary, ' - Department: ', emp_department) as result;
+	ELSE
+		SELECT CONCAT (emp_name, ' not found in IT department.') as error;
+	END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+-- The delimiter is to change the ; into //, for creating statements in our stored procedure
+CREATE PROCEDURE CheckSalary(IN emp_id INT)
+-- IN means that this takes a parameter to be used in the procedure
+BEGIN
+    DECLARE emp_salary DECIMAL(10,2);
+    DECLARE emp_name VARCHAR(100);
+    
+    SELECT salary, name INTO emp_salary, emp_name FROM employees WHERE id = emp_id;
+    
+    IF emp_salary > 60000 THEN
+        SELECT CONCAT(emp_name, ' has a high salary: $', emp_salary) AS message;
+    ELSEIF emp_salary > 50000 THEN
+        SELECT CONCAT(emp_name, ' has a medium salary: $', emp_salary) AS message;
+    ELSE
+        SELECT CONCAT(emp_name, ' has a low salary: $', emp_salary) AS message;
+    END IF;
+END //
+DELIMITER ;
+
+* Showing the Stored Procedure
+SHOW PROCEDURE STATUS;
+
+* Dropping the Stored Procedure
+DROP PROCEDURE CheckSalary;
+
+* Using the Stored Procedure
+CALL CheckSalary(1);
+
+* CASE Statement
+
+DELIMITER //
+CREATE
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetEmployeeLevel(IN emp_id INT)
+BEGIN
+    DECLARE emp_years INT;
+    DECLARE emp_level VARCHAR(20);
+    
+    SELECT TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) INTO emp_years 
+    FROM employees WHERE id = emp_id;
+    
+    SET emp_level = CASE 
+        WHEN emp_years >= 5 THEN 'Senior'
+        WHEN emp_years >= 3 THEN 'Mid-level'
+        WHEN emp_years >= 1 THEN 'Junior'
+        ELSE 'New Hire'
+    END;
+    
+    SELECT CONCAT('Employee #', emp_id, ' is a ', emp_level, ' employee') AS result;
+END //
+DELIMITER ;
+
+* Using the Stored Procedure
+CALL GetEmployeeLevel(4);
+
+* While Loop
+DELIMITER //
+CREATE PROCEDURE GenerateSalaryIncrements(IN dept_name VARCHAR(50), IN increment_percent DECIMAL(5,2))
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE emp_id INT;
+    DECLARE emp_salary DECIMAL(10,2);
+    DECLARE cur CURSOR FOR SELECT id, salary FROM employees WHERE department = dept_name;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cur;
+    
+    read_loop: WHILE NOT done DO
+        FETCH cur INTO emp_id, emp_salary;
+        IF NOT done THEN
+            UPDATE employees 
+            SET salary = salary * (1 + increment_percent/100) 
+            WHERE id = emp_id;
+            
+            SELECT CONCAT('Updated salary for employee #', emp_id, 
+                         ' from $', emp_salary, 
+                         ' to $', emp_salary * (1 + increment_percent/100)) AS update_message;
+        END IF;
+    END WHILE;
+    
+    CLOSE cur;
+END //
+DELIMITER ;
+
+* Using the Stored Procedure
+CALL GenerateSalaryIncrements('IT', 5.0);
+
+
+* Handling Errors and Exception Handling
+
+* Error Handling with CONTINUE HANDLER
+DELIMITER //
+CREATE PROCEDURE SafeEmployeeLookup(IN emp_id INT)
+BEGIN
+    DECLARE emp_name VARCHAR(100);
+    DECLARE emp_salary DECIMAL(10,2);
+    DECLARE CONTINUE HANDLER FOR NOT FOUND
+    BEGIN
+        SELECT CONCAT('Employee with ID ', emp_id, ' not found') AS message;
+    END;
+    
+    SELECT name, salary INTO emp_name, emp_salary FROM employees WHERE id = emp_id;
+    
+    IF emp_name IS NOT NULL THEN
+        SELECT CONCAT('Employee found: ', emp_name, ' with salary $', emp_salary) AS message;
+    END IF;
+END //
+DELIMITER ;
+
+* Test with existing and non-existing IDs
+CALL SafeEmployeeLookup(2);
+CALL SafeEmployeeLookup(99);
+
+* Handling SQL Warnings and Errors with GET DIAGNOSTICS
+
+DELIMITER //
+CREATE PROCEDURE ProcessTransaction(
+    IN p_account_id INT, 
+    IN p_amount DECIMAL(10,2), 
+    IN p_type VARCHAR(20)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, 
+        @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+        SELECT CONCAT('Error ', @errno, ' (', @sqlstate, '): ', @text) AS error_message;
+        ROLLBACK;
+    END;
+    
+    DECLARE EXIT HANDLER FOR SQLWARNING
+    BEGIN
+        SELECT 'Warning occurred - transaction rolled back' AS message;
+        ROLLBACK;
+    END;
+    
+    START TRANSACTION;
+    
+    -- Attempt to insert transaction
+    INSERT INTO account_transactions (account_id, amount, transaction_type)
+    VALUES (p_account_id, p_amount, p_type);
+    
+    -- Update some account balance (simulated)
+    SELECT CONCAT('Processed ', p_type, ' of $', p_amount, ' for account ', p_account_id) AS message;
+    
+    COMMIT;
+END //
+DELIMITER ;
+
+-- Test the procedure
+CALL ProcessTransaction(101, 250.00, 'deposit'); -- Valid
+CALL ProcessTransaction(999, -100.00, 'withdrawal'); -- Should cause error
