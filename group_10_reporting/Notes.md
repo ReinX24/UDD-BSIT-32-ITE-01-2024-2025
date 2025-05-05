@@ -491,6 +491,14 @@ Using the new GetDepartmentCount procedure
 
 ### DROP PROCEDURE (deleting a procedure)
 
+Dropping out GetDepartmentCount procedure
+
+```
+DROP PROCEDURE IF EXISTS GetDepartmentCount;
+
+CALL GetDepartmentCount(50000); -- Does not work
+```
+
 ## Activities
 
 ### IF CASE
