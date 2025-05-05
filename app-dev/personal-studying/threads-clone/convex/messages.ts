@@ -30,7 +30,7 @@ export const addThreadMessage = mutation({
 
 export const getThreads = query({
   args: {
-    paginationOptions: paginationOptsValidator,
+    paginationOpts: paginationOptsValidator,
     userId: v.optional(v.id("users")),
   },
   handler: async (ctx, args) => {
@@ -44,7 +44,7 @@ export const getThreads = query({
           return q.eq(q.field("userId"), args.userId);
         })
         .order("desc")
-        .paginate(args.paginationOptions);
+        .paginate(args.paginationOpts);
     } else {
       threads = await ctx.db
         .query("messages")
@@ -53,7 +53,7 @@ export const getThreads = query({
           return q.eq(q.field("threadId"), undefined);
         })
         .order("desc")
-        .paginate(args.paginationOptions);
+        .paginate(args.paginationOpts);
     }
 
     const messagesWithCreator = await Promise.all(
