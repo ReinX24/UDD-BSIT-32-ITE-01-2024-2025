@@ -357,6 +357,140 @@ CALL AddEmployee(6, 'Lisa Chen', 58000, 'IT'); -- Success
 CALL AddEmployee(1, 'Duplicate', 50000, 'HR'); -- Fails (ID 1 exists)
 ```
 
+## Transactions in Stored Procedures
+
+### START TRANSACTION, COMMIT, ROLLBACK
+
+PromoteEmployee procedure, only commit transaction_amount not less than 100
+
+```
+DELIMITER //
+CREATE PROCEDURE SimpleTransfer(
+  IN from_account INT,
+  IN to_account INT,
+  IN transfer_amount DECIMAL(10,2)
+)
+BEGIN
+-- Start transaction
+START TRANSACTION;
+
+  -- Withdraw from source account
+  INSERT INTO account_transactions
+  (account_id, amount, transaction_type, status)
+  VALUES (from_account, transfer_amount, 'withdrawal', 'completed');
+
+  -- Deposit to target account
+  INSERT INTO account_transactions
+  (account_id, amount, transaction_type, status)
+  VALUES (to_account, transfer_amount, 'deposit', 'completed');
+
+  -- If the transfer amount is less than 100, then rollback the changes
+  IF transfer_amount < 100 THEN
+    -- If any error occurs, this will execute instead
+    ROLLBACK;
+    SELECT 'Transfer failed - rolled back changes' AS message;
+  ELSE
+    -- If we reach here, everything worked
+    COMMIT;
+    SELECT 'Transfer completed successfully!' AS message;
+  END IF;
+END //
+DELIMITER ;
+```
+
+Using the SimpleTransfer procedure
+
+```
+CALL SimpleTransfer(101, 102, 100.00); -- Succeeds
+CALL SimpleTransfer(101, 102, 50.00); -- Fails
+```
+
+PromoteEmployee Stored Procedure
+
+```
+DELIMITER //
+CREATE PROCEDURE PromoteEmployee(
+    IN emp_id INT,
+    IN salary_increase DECIMAL(10,2)
+)
+BEGIN
+    DECLARE current_salary DECIMAL(10,2);
+
+    START TRANSACTION;
+
+    -- Get current salary
+    SELECT salary INTO current_salary FROM employees WHERE id = emp_id;
+
+    -- Update salary
+    UPDATE employees
+    SET salary = salary + salary_increase
+    WHERE id = emp_id;
+
+    IF salary_increase > 10000 THEN
+      -- If we get here, commit changes
+      COMMIT;
+      SELECT 'Promotion processed successfully' AS message;
+    ELSE
+      -- If anything fails
+      ROLLBACK;
+      SELECT 'Promotion failed - no changes made' AS message;
+    END IF;
+END //
+DELIMITER ;
+```
+
+Using the PromoteEmployee procedure
+
+```
+CALL PromoteEmployee(1, 20000.00); -- Succeeds
+CALL PromoteEmployee(1, 5000.00); -- Fails
+```
+
+## Modifying and Deleting Stored Procedures
+
+### ALTER PROCEDURE (modifying existing procedures)
+
+GetDepartmentCount procedure
+
+```
+DELIMITER //
+CREATE PROCEDURE GetDepartmentCount()
+BEGIN
+  SELECT department, COUNT(*) as employee_count
+  FROM employees
+  GROUP BY department;
+END //
+DELIMITER ;
+```
+
+Using GetDepartmentCount procedure
+
+`CALL GetDepartmentCount(); -- Test original`
+
+Altering the existing procedure
+
+```
+-- First drop the old version
+DROP PROCEDURE IF EXISTS GetDepartmentCount;
+
+-- Create new version
+DELIMITER //
+CREATE PROCEDURE GetDepartmentCount(IN min_salary DECIMAL(10,2))
+BEGIN
+  SELECT department, COUNT(*) as employee_count
+  FROM employees
+  WHERE salary >= min_salary
+  GROUP BY department;
+END //
+DELIMITER ;
+```
+
+Using the new GetDepartmentCount procedure
+
+`CALL GetDepartmentCount(50000); -- Only counts employees earning ≥50k`
+
+### DROP PROCEDURE (deleting a procedure)
+
 ## Activities
 
 ### IF CASE
