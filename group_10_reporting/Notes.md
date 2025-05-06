@@ -170,6 +170,25 @@ Using the Stored Procedure
 
 `CALL GetEmployeeLevel(4);`
 
+INSERTING DATA
+
+```
+DELIMITER //
+CREATE PROCEDURE InsertNewEmployee(
+  IN emp_id INT,
+  IN emp_name VARCHAR(64),
+  IN emp_salary DECIMAL(10 ,2),
+  IN emp_department VARCHAR(64),
+  IN emp_hire_date DATE
+)
+  BEGIN
+
+  INSERT INTO employees VALUES (emp_id, emp_name, emp_salary, emp_department, emp_hire_date);
+
+  END //
+DELIMITER ;
+```
+
 ### Creating a Stored Procedure with a WHILE LOOP
 
 Get first 3 records in the employees table
@@ -353,7 +372,7 @@ DELIMITER ;
 Using the AddEmployee procedure
 
 ```
-CALL AddEmployee(6, 'Lisa Chen', 58000, 'IT'); -- Success
+CALL AddEmployee(7, 'Lisa Chen', 58000, 'IT'); -- Success
 CALL AddEmployee(1, 'Duplicate', 50000, 'HR'); -- Fails (ID 1 exists)
 ```
 
