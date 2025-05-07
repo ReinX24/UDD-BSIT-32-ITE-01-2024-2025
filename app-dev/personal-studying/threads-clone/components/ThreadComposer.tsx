@@ -117,8 +117,23 @@ const ThreadComposer = ({
   };
 
   return (
-    <View>
-      <StatusBar hidden />
+    <TouchableOpacity
+      onPress={() => {
+        router.push("/(auth)/(modal)/create");
+      }}
+      style={
+        isPreview && {
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          // height: 100,
+          // backgroundColor: "red",
+          pointerEvents: "box-only",
+        }
+      }
+    >
+      {/* <StatusBar hidden /> */}
       <Stack.Screen
         options={{
           headerLeft: () => {
@@ -235,7 +250,7 @@ const ThreadComposer = ({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -283,7 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    padding: 12,
+    paddingHorizontal: 12,
     paddingLeft: 64,
   },
   keyboardAccessoryText: {

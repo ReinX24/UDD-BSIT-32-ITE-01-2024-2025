@@ -13,19 +13,21 @@ import {
 } from "@expo-google-fonts/dm-sans";
 import {
   Slot,
+  Stack,
   useNavigationContainerRef,
   useRouter,
   useSegments,
 } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { LogBox } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { LogBox, SafeAreaView, Text, View } from "react-native";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -39,27 +41,27 @@ if (!clerkPublishableKey) {
 
 LogBox.ignoreLogs(["Clerk: Clerk has been loaded with development keys"]);
 
-import * as Sentry from "@sentry/react-native";
-import { isRunningInExpoGo } from "expo";
+// import * as Sentry from "@sentry/react-native";
+// import { isRunningInExpoGo } from "expo";
 
-const navigationIntegration = Sentry.reactNavigationIntegration({
-  enableTimeToInitialDisplay: !isRunningInExpoGo(),
-});
+// const navigationIntegration = Sentry.reactNavigationIntegration({
+//   enableTimeToInitialDisplay: !isRunningInExpoGo(),
+// });
 
-Sentry.init({
-  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-  attachScreenshot: true,
-  debug: false,
-  tracesSampleRate: 1.0,
-  _experiments: {
-    profileSampleRate: 1.0,
-    replaysSessionSampleRate: 1.0,
-    replaysOnErrorSampleRate: 1.0,
-  },
-  integrations: [navigationIntegration, Sentry.mobileReplayIntegration()],
-  // enableNativeFramesTracking: !isRunningInExpoGo(),
-  enableNativeFramesTracking: true,
-});
+// Sentry.init({
+//   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+//   attachScreenshot: true,
+//   debug: false,
+//   tracesSampleRate: 1.0,
+//   _experiments: {
+//     profileSampleRate: 1.0,
+//     replaysSessionSampleRate: 1.0,
+//     replaysOnErrorSampleRate: 1.0,
+//   },
+//   integrations: [navigationIntegration, Sentry.mobileReplayIntegration()],
+//   // enableNativeFramesTracking: !isRunningInExpoGo(),
+//   enableNativeFramesTracking: true,
+// });
 
 // Sentry.init({
 //   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
@@ -72,23 +74,10 @@ Sentry.init({
 SplashScreen.preventAutoHideAsync();
 
 const InitialLayout = () => {
-  const [fontsLoaded] = useFonts({
-    DMSans_400Regular,
-    DMSans_500Medium,
-    DMSans_700Bold,
-  });
-
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const user = useUser();
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      // Hides the splash screen once the fonts are loaded
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // const user = useUser();
 
   useEffect(() => {
     if (!isLoaded) {
@@ -108,38 +97,69 @@ const InitialLayout = () => {
       // return to login
       router.replace("/(public)");
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, segments]);
 
-  useEffect(() => {
-    if (user && user.user) {
-      Sentry.setUser({
-        email: user.user.emailAddresses[0].emailAddress,
-        id: user.user.id,
-      });
-    } else {
-      Sentry.setUser(null);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user && user.user) {
+  //     Sentry.setUser({
+  //       email: user.user.emailAddresses[0].emailAddress,
+  //       id: user.user.id,
+  //     });
+  //   } else {
+  //     Sentry.setUser(null);
+  //   }
+  // }, [user]);
 
-  return <Slot />;
+  // return <Slot />;
+  return <Stack screenOptions={{ headerShown: false }}></Stack>;
 };
 
 const RootLayout = () => {
-  const ref = useNavigationContainerRef();
+  // const ref = useNavigationContainerRef();
+  // useEffect(() => {
+  //   navigationIntegration.registerNavigationContainer(ref);
+  // }, [ref]);
+
+  const [fontsLoaded] = useFonts({
+    DMSans_400Regular,
+    DMSans_500Medium,
+    DMSans_700Bold,
+  });
+
   useEffect(() => {
-    navigationIntegration.registerNavigationContainer(ref);
-  }, [ref]);
+    if (fontsLoaded) {
+      // Hides the splash screen once the fonts are loaded
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      return await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   return (
     <ClerkProvider publishableKey={clerkPublishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <InitialLayout />
-          <StatusBar style="dark" />
+          <SafeAreaProvider>
+            <SafeAreaView
+              style={{
+                flex: 1,
+                // backgroundColor: "black",
+              }}
+              onLayout={onLayoutRootView}
+            >
+              <InitialLayout />
+              <StatusBar style="dark" />
+            </SafeAreaView>
+          </SafeAreaProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>
     </ClerkProvider>
   );
 };
 
-export default Sentry.wrap(RootLayout);
+// export default Sentry.wrap(RootLayout);
+export default RootLayout;

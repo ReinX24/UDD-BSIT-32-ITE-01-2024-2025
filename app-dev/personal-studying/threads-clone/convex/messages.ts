@@ -46,6 +46,7 @@ export const getThreads = query({
         .order("desc")
         .paginate(args.paginationOpts);
     } else {
+      // Gets all the threads if no userId is provided
       threads = await ctx.db
         .query("messages")
         .filter((q) => {
@@ -56,6 +57,7 @@ export const getThreads = query({
         .paginate(args.paginationOpts);
     }
 
+    // Getting the threads with their creator information
     const messagesWithCreator = await Promise.all(
       threads.page.map(async (thread) => {
         const creator = await getMessageCreator(ctx, thread.userId);
@@ -67,6 +69,7 @@ export const getThreads = query({
       })
     );
 
+    // messagesWithCreator overrides the return info as it is paginated
     return {
       ...threads,
       page: messagesWithCreator,
