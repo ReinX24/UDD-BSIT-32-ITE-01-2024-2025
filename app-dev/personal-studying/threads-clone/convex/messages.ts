@@ -36,6 +36,8 @@ export const getThreads = query({
   handler: async (ctx, args) => {
     let threads;
 
+    const user = await getCurrentUserOrThrow(ctx);
+
     // For viewing threads created by a specific user
     if (args.userId) {
       threads = await ctx.db
@@ -61,10 +63,20 @@ export const getThreads = query({
     const messagesWithCreator = await Promise.all(
       threads.page.map(async (thread) => {
         const creator = await getMessageCreator(ctx, thread.userId);
+        const mediaUrls = await getMediaUrls(ctx, thread.mediaFiles);
+
+        const like = await ctx.db
+          .query("likes")
+          .withIndex("byUserAndThread", (q) => {
+            return q.eq("userId", user._id).eq("threadId", thread._id);
+          })
+          .first();
 
         return {
           ...thread,
           creator,
+          mediaFiles: mediaUrls,
+          isLiked: !!like,
         };
       })
     );
@@ -74,6 +86,47 @@ export const getThreads = query({
       ...threads,
       page: messagesWithCreator,
     };
+  },
+});
+
+export const likeThread = mutation({
+  args: {
+    threadId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
+
+    const existing = await ctx.db
+      .query("likes")
+      .withIndex("byUserAndThread", (q) => {
+        return q.eq("userId", user._id).eq("threadId", args.threadId);
+      })
+      .first();
+
+    const message = await ctx.db.get(args.threadId);
+
+    if (!message) {
+      throw new Error("Thread not found.");
+    }
+
+    // If the like already exists, delete the like in the database
+    if (existing) {
+      await ctx.db.delete(existing._id);
+      await ctx.db.patch(args.threadId, {
+        likeCount: (message?.likeCount || 0) - 1,
+      });
+      return false;
+    } else {
+      await ctx.db.insert("likes", {
+        userId: user._id,
+        threadId: args.threadId,
+      });
+      await ctx.db.patch(args.threadId, {
+        likeCount: (message?.likeCount || 0) + 1,
+      });
+    }
+
+    return true;
   },
 });
 
@@ -92,6 +145,25 @@ const getMessageCreator = async (ctx: QueryCtx, userId: Id<"users">) => {
     ...user,
     imageUrl,
   };
+};
+
+const getMediaUrls = async (
+  ctx: QueryCtx,
+  mediaFiles: string[] | undefined
+) => {
+  if (!mediaFiles || mediaFiles.length === 0) {
+    return [];
+  }
+
+  return await Promise.all(
+    mediaFiles.map(async (file) => {
+      let url: string | null = file;
+      if (!file.startsWith("http")) {
+        url = await ctx.storage.getUrl(file as Id<"_storage">);
+      }
+      return url;
+    })
+  );
 };
 
 export const generateUploadUrl = mutation({

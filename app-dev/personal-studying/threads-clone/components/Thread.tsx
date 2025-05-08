@@ -1,17 +1,28 @@
 import { COLORS } from "@/constants/COLORS";
+import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { useMutation } from "convex/react";
 import { asObjectValidator } from "convex/values";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Link, RelativePathString } from "expo-router";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type ThreadProps = {
   thread: Doc<"messages"> & {
     creator: Doc<"users">;
+    isLiked: boolean;
   };
 };
 
 const Thread = ({ thread }: ThreadProps) => {
-  console.log(thread);
+  // console.log(thread.mediaUrls);
   const {
     content,
     mediaFiles,
@@ -20,6 +31,8 @@ const Thread = ({ thread }: ThreadProps) => {
     retweetCount,
     creator,
   } = thread;
+
+  const likeThread = useMutation(api.messages.likeThread);
 
   return (
     <View style={styles.container}>
@@ -44,10 +57,47 @@ const Thread = ({ thread }: ThreadProps) => {
 
         <Text style={styles.content}>{content}</Text>
 
+        {mediaFiles && mediaFiles?.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.mediaContainer}
+          >
+            {mediaFiles.map((imageUrl, index) => {
+              return (
+                <Link
+                  href={`/(modal)/image/${imageUrl}` as RelativePathString}
+                  key={index}
+                  asChild
+                >
+                  <TouchableOpacity>
+                    <Image
+                      key={index}
+                      source={{ uri: imageUrl }}
+                      style={styles.mediaImage}
+                    />
+                  </TouchableOpacity>
+                </Link>
+              );
+            })}
+          </ScrollView>
+        )}
+
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="heart-outline" size={24} color="black" />
-            <Text style={styles.actionText}>{likeCount}</Text>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              likeThread({ threadId: thread._id });
+            }}
+          >
+            <Ionicons
+              name={thread.isLiked ? "heart" : "heart-outline"}
+              size={24}
+              color="black"
+            />
+            {likeCount > 0 && (
+              <Text style={styles.actionText}>{likeCount}</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="chatbubble-outline" size={24} color="black" />
@@ -117,5 +167,16 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 14,
+  },
+  mediaImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+    // marginRight: 10,
+  },
+  mediaContainer: {
+    paddingRight: 10,
+    gap: 14,
   },
 });

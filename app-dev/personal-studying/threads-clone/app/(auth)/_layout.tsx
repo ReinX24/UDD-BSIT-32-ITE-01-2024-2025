@@ -53,6 +53,37 @@ const Layout = () => {
           },
         }}
       />
+      <Stack.Screen
+        name="(modal)/image/[url]"
+        options={{
+          presentation: "fullScreenModal",
+          headerTitleAlign: "center",
+          title: "",
+          headerStyle: {},
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  router.dismiss();
+                }}
+              >
+                <Ionicons name="close" size={24} color={"white"} />
+              </TouchableOpacity>
+            );
+          },
+          headerRight: () => {
+            return (
+              <TouchableOpacity>
+                <Ionicons
+                  name="ellipsis-horizontal-circle"
+                  size={24}
+                  color={"white"}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
     </Stack>
   );
 };

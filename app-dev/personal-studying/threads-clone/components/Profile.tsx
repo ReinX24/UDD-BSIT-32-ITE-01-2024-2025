@@ -1,5 +1,5 @@
 import { COLORS } from "@/constants/COLORS";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -14,9 +14,12 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Tabs from "./Tabs";
 import UserProfile from "./UserProfile";
+import { usePaginatedQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Thread from "./Thread";
 
 type ProfileProps = {
-  userId?: Id<"users"> | string;
+  userId?: Id<"users">;
   showBackButton: boolean;
 };
 
@@ -30,12 +33,31 @@ export default function Profile({
   const { signOut } = useAuth();
   const router = useRouter();
 
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.messages.getThreads,
+    {
+      userId: userId || userProfile?._id,
+    },
+    {
+      initialNumItems: 4,
+    }
+  );
+
   return (
     <View style={[styles.container, { paddingTop: top }]}>
       <FlatList
-        data={[]}
+        data={results}
         renderItem={({ item }) => {
-          return <Text>Test</Text>;
+          return (
+            <Thread
+              thread={
+                item as Doc<"messages"> & {
+                  creator: Doc<"users">;
+                  mediaUrls: string[];
+                }
+              }
+            />
+          );
         }}
         ListEmptyComponent={
           <Text style={styles.tabContentText}>

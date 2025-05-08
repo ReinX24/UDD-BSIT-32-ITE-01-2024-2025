@@ -1,33 +1,65 @@
-import {
-  View,
-  Text,
-  Button,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Image,
-} from "react-native";
-import * as Sentry from "@sentry/react-native";
-import { usePaginatedQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useState } from "react";
-import { COLORS } from "@/constants/COLORS";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ThreadComposer from "@/components/ThreadComposer";
 import Thread from "@/components/Thread";
+import ThreadComposer from "@/components/ThreadComposer";
+import { COLORS } from "@/constants/COLORS";
+import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useIsFocused } from "@react-navigation/native";
+import { usePaginatedQuery } from "convex/react";
+import { useNavigation } from "expo-router";
+import { useState } from "react";
+import { Image, RefreshControl, StyleSheet, View } from "react-native";
+import Animated, {
+  runOnJS,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const FeedIndex = () => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.messages.getThreads,
     {},
     {
-      initialNumItems: 5,
+      initialNumItems: 4,
     }
   );
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { top } = useSafeAreaInsets();
+
+  // Animation
+  const navigation = useNavigation();
+  const scrollOffSet = useSharedValue(0);
+  const tabBarHeight = useBottomTabBarHeight();
+  const isFocused = useIsFocused();
+
+  const updateTabBar = () => {
+    let newMarginBottom = 0;
+
+    if (scrollOffSet.value >= 0 && scrollOffSet.value <= tabBarHeight) {
+      newMarginBottom = -scrollOffSet.value;
+    } else if (scrollOffSet.value > tabBarHeight) {
+      newMarginBottom = -tabBarHeight;
+    }
+    // console.log(newMarginBottom);
+
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        marginBottom: newMarginBottom,
+      },
+    });
+  };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      // console.log(event.contentOffset.y);
+      if (isFocused) {
+        scrollOffSet.value = event.contentOffset.y;
+        runOnJS(updateTabBar)();
+      }
+    },
+  });
 
   const onLoadMore = () => {
     loadMore(5);
@@ -41,16 +73,23 @@ const FeedIndex = () => {
     }, 2000);
   };
 
-  console.log(results);
+  // console.log(results);
 
   return (
-    <FlatList
+    <Animated.FlatList
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
       data={results}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => {
         return (
           <Thread
-            thread={item as Doc<"messages"> & { creator: Doc<"users"> }}
+            thread={
+              item as Doc<"messages"> & {
+                creator: Doc<"users">;
+                mediaUrls: string[];
+              }
+            }
           />
         );
       }}
@@ -82,6 +121,9 @@ const FeedIndex = () => {
           <ThreadComposer isPreview={true} />
         </View>
       }
+      style={{
+        backgroundColor: COLORS.background,
+      }}
     />
   );
 };
