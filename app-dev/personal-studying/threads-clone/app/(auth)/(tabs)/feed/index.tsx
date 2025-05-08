@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
-  useSharedValue
+  useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

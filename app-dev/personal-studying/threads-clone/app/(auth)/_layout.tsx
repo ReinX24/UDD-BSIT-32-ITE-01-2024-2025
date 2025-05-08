@@ -58,6 +58,7 @@ const Layout = () => {
         options={{
           presentation: "fullScreenModal",
           headerTitleAlign: "center",
+          headerShown: false,
           title: "",
           headerStyle: {
             backgroundColor: "black",

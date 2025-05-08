@@ -1,5 +1,5 @@
 import { paginationOptsValidator } from "convex/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
@@ -127,6 +127,25 @@ export const likeThread = mutation({
     }
 
     return true;
+  },
+});
+
+export const getThreadById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const thread = await ctx.db.get(args.messageId);
+
+    if (!thread) {
+      return null;
+    }
+
+    const creator = await getMessageCreator(ctx, thread.userId);
+    const mediaUrls = await getMediaUrls(ctx, thread.mediaFiles);
+    // TODO: continue creating this method
+
+    return thread;
   },
 });
 

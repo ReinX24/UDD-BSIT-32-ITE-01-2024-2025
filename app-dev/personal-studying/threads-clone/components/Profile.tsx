@@ -3,7 +3,7 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@clerk/clerk-expo";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   FlatList,
   StyleSheet,
@@ -49,14 +49,23 @@ export default function Profile({
         data={results}
         renderItem={({ item }) => {
           return (
-            <Thread
-              thread={
-                item as Doc<"messages"> & {
-                  creator: Doc<"users">;
-                  isLiked: boolean;
-                }
+            <Link
+              href={
+                `/(auth)/(tabs)/feed/${item._id}` as "/(auth)/(tabs)/feed/[id]"
               }
-            />
+              asChild
+            >
+              <TouchableOpacity>
+                <Thread
+                  thread={
+                    item as Doc<"messages"> & {
+                      creator: Doc<"users">;
+                      isLiked: boolean;
+                    }
+                  }
+                />
+              </TouchableOpacity>
+            </Link>
           );
         }}
         ListEmptyComponent={

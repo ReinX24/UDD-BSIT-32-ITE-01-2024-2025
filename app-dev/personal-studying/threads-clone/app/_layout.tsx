@@ -147,7 +147,7 @@ const RootLayout = () => {
             <SafeAreaView
               style={{
                 flex: 1,
-                // backgroundColor: "black",
+                backgroundColor: "black",
               }}
               onLayout={onLayoutRootView}
             >

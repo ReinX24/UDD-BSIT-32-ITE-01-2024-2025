@@ -1,13 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { COLORS } from "@/constants/COLORS";
+import { useLocalSearchParams } from "expo-router";
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const Page = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
+
   return (
-    <View>
-      <Text>Threads details</Text>
-    </View>
+    <SafeAreaView style={[styles.container]}>
+      <StatusBar hidden />
+      <ScrollView></ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default Page;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+});
