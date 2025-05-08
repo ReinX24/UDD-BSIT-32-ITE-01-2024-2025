@@ -7,6 +7,7 @@ const Layout = () => {
         name="index"
         options={{ headerShown: false, title: "Home" }}
       />
+      <Stack.Screen name="profile/[id]" options={{ headerShown: false }} />
     </Stack>
   );
 };

@@ -59,7 +59,9 @@ const Layout = () => {
           presentation: "fullScreenModal",
           headerTitleAlign: "center",
           title: "",
-          headerStyle: {},
+          headerStyle: {
+            backgroundColor: "black",
+          },
           headerLeft: () => {
             return (
               <TouchableOpacity

@@ -40,9 +40,16 @@ const Thread = ({ thread }: ThreadProps) => {
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.headerTextName}>
-              {creator.first_name} {creator.last_name}
-            </Text>
+            <Link
+              href={
+                `/(auth)/(tabs)/feed/profile/${creator._id}` as RelativePathString
+              }
+              asChild
+            >
+              <Text style={styles.headerTextName}>
+                {creator.first_name} {creator.last_name}
+              </Text>
+            </Link>
             <Text style={styles.timestamp}>
               {new Date(thread._creationTime).toLocaleDateString()}
             </Text>
@@ -66,7 +73,9 @@ const Thread = ({ thread }: ThreadProps) => {
             {mediaFiles.map((imageUrl, index) => {
               return (
                 <Link
-                  href={`/(modal)/image/${imageUrl}` as RelativePathString}
+                  href={
+                    `/(modal)/image/${encodeURIComponent(imageUrl)}` as RelativePathString
+                  }
                   key={index}
                   asChild
                 >

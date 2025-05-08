@@ -4,15 +4,13 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMutation } from "convex/react";
-import { Stack, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import * as ImagePicker from "expo-image-picker";
+import { ImagePickerAsset, ImagePickerOptions } from "expo-image-picker";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
   Image,
-  InputAccessoryView,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,8 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ImagePickerAsset, ImagePickerOptions } from "expo-image-picker";
-import * as ImagePicker from "expo-image-picker";
 
 type ThreadComposerProps = {
   isPreview?: boolean;
@@ -116,11 +112,18 @@ const ThreadComposer = ({
     return storageId;
   };
 
+  const pathname = usePathname();
+
+  // if (pathname == "/create") {
+  //   console.log("CREATE SCREEN!");
+  // }
+
   return (
     <TouchableOpacity
       onPress={() => {
         router.push("/(auth)/(modal)/create");
       }}
+      disabled={pathname === "/create"}
       style={
         isPreview && {
           top: 0,

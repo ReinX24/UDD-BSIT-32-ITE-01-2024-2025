@@ -20,7 +20,7 @@ import Thread from "./Thread";
 
 type ProfileProps = {
   userId?: Id<"users">;
-  showBackButton: boolean;
+  showBackButton?: boolean;
 };
 
 export default function Profile({
@@ -53,7 +53,7 @@ export default function Profile({
               thread={
                 item as Doc<"messages"> & {
                   creator: Doc<"users">;
-                  mediaUrls: string[];
+                  isLiked: boolean;
                 }
               }
             />

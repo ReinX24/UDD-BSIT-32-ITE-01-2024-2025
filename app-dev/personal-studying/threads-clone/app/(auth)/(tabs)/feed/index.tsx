@@ -6,13 +6,18 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useIsFocused } from "@react-navigation/native";
 import { usePaginatedQuery } from "convex/react";
-import { useNavigation } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
-import { Image, RefreshControl, StyleSheet, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
-  runOnJS,
   useAnimatedScrollHandler,
-  useSharedValue,
+  useSharedValue
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -42,6 +47,7 @@ const FeedIndex = () => {
     } else if (scrollOffSet.value > tabBarHeight) {
       newMarginBottom = -tabBarHeight;
     }
+
     // console.log(newMarginBottom);
 
     navigation.getParent()?.setOptions({
@@ -56,7 +62,7 @@ const FeedIndex = () => {
       // console.log(event.contentOffset.y);
       if (isFocused) {
         scrollOffSet.value = event.contentOffset.y;
-        runOnJS(updateTabBar)();
+        // runOnJS(updateTabBar)();
       }
     },
   });
@@ -76,56 +82,74 @@ const FeedIndex = () => {
   // console.log(results);
 
   return (
-    <Animated.FlatList
-      onScroll={scrollHandler}
-      scrollEventThrottle={16}
-      data={results}
-      showsVerticalScrollIndicator={false}
-      renderItem={({ item }) => {
-        return (
-          <Thread
-            thread={
-              item as Doc<"messages"> & {
-                creator: Doc<"users">;
-                mediaUrls: string[];
+    <View style={[styles.container, { paddingTop: top }]}>
+      <Animated.FlatList
+        // onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        data={results}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          return (
+            <Link
+              href={
+                `/(auth)/(tabs)/feed/${item._id}` as "/(auth)/(tabs)/feed/[id]"
               }
-            }
-          />
-        );
-      }}
-      keyExtractor={(item) => {
-        return item._id;
-      }}
-      onEndReached={onLoadMore}
-      onEndReachedThreshold={0.5}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      ItemSeparatorComponent={() => {
-        return (
-          <View
-            style={{
-              height: StyleSheet.hairlineWidth,
-              backgroundColor: COLORS.border,
-            }}
-          ></View>
-        );
-      }}
-      contentContainerStyle={{ paddingVertical: top }}
-      ListHeaderComponent={
-        <View style={{ paddingBottom: 16 }}>
-          <Image
-            source={require("@/assets/images/threads-logo-black.png")}
-            style={{ width: 40, height: 40, alignSelf: "center" }}
-          />
-          <ThreadComposer isPreview={true} />
-        </View>
-      }
-      style={{
-        backgroundColor: COLORS.background,
-      }}
-    />
+              asChild
+            >
+              <TouchableOpacity>
+                <Thread
+                  thread={
+                    item as Doc<"messages"> & {
+                      creator: Doc<"users">;
+                      isLiked: boolean;
+                    }
+                  }
+                />
+              </TouchableOpacity>
+            </Link>
+          );
+        }}
+        keyExtractor={(item) => {
+          return item._id;
+        }}
+        onEndReached={onLoadMore}
+        onEndReachedThreshold={0.5}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ItemSeparatorComponent={() => {
+          return (
+            <View
+              style={{
+                height: StyleSheet.hairlineWidth,
+                backgroundColor: COLORS.border,
+              }}
+            ></View>
+          );
+        }}
+        // contentContainerStyle={{ paddingVertical: top }}
+        ListHeaderComponent={
+          <View style={{ paddingBottom: 16 }}>
+            <Image
+              source={require("@/assets/images/threads-logo-black.png")}
+              style={{ width: 40, height: 40, alignSelf: "center" }}
+            />
+            <ThreadComposer isPreview={true} />
+          </View>
+        }
+        style={{
+          backgroundColor: COLORS.background,
+        }}
+      />
+    </View>
   );
 };
 
 export default FeedIndex;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+});
