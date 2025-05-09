@@ -87,6 +87,25 @@ const Layout = () => {
           },
         }}
       />
+      <Stack.Screen
+        name="(modal)/reply/[id]"
+        options={{
+          presentation: "modal",
+          headerTitleAlign: "center",
+          title: "Reply",
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  router.dismiss();
+                }}
+              >
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
     </Stack>
   );
 };

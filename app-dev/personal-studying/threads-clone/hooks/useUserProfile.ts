@@ -11,5 +11,6 @@ export function useUserProfile() {
     clerkId: clerkId,
   });
 
+  // This makes sure that this returns as an object
   return { userProfile };
 }

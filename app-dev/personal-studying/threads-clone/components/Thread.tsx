@@ -40,12 +40,7 @@ const Thread = ({ thread }: ThreadProps) => {
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Link
-              href={
-                `/(auth)/(tabs)/feed/profile/${creator._id}` as RelativePathString
-              }
-              asChild
-            >
+            <Link href={`/(auth)/(tabs)/feed/profile/${creator._id}`} asChild>
               <Text style={styles.headerTextName}>
                 {creator.first_name} {creator.last_name}
               </Text>

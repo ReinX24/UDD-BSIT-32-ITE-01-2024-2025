@@ -14,7 +14,7 @@ export const addThreadMessage = mutation({
   handler: async (ctx, args) => {
     const user = await getCurrentUserOrThrow(ctx);
 
-    return await ctx.db.insert("messages", {
+    const message = await ctx.db.insert("messages", {
       ...args,
       userId: user._id,
       likeCount: 0,
@@ -22,9 +22,14 @@ export const addThreadMessage = mutation({
       retweetCount: 0,
     });
 
-    // TODO: Do this later
     if (args.threadId) {
+      const originalThread = await ctx.db.get(args.threadId);
+      await ctx.db.patch(args.threadId, {
+        commentCount: (originalThread?.commentCount || 0) + 1,
+      });
     }
+
+    return message;
   },
 });
 
@@ -135,6 +140,7 @@ export const getThreadById = query({
     messageId: v.id("messages"),
   },
   handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
     const thread = await ctx.db.get(args.messageId);
 
     if (!thread) {
@@ -143,9 +149,20 @@ export const getThreadById = query({
 
     const creator = await getMessageCreator(ctx, thread.userId);
     const mediaUrls = await getMediaUrls(ctx, thread.mediaFiles);
-    // TODO: continue creating this method
 
-    return thread;
+    const like = await ctx.db
+      .query("likes")
+      .withIndex("byUserAndThread", (q) => {
+        return q.eq("userId", user._id).eq("threadId", thread._id);
+      })
+      .first();
+
+    return {
+      ...thread,
+      creator,
+      mediaFiles: mediaUrls,
+      isLiked: !!like,
+    };
   },
 });
 

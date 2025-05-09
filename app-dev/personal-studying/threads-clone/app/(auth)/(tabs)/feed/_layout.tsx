@@ -1,8 +1,6 @@
 import { COLORS } from "@/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Layout = () => {

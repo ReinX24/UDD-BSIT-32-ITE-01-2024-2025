@@ -7,10 +7,12 @@ import { useMutation } from "convex/react";
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerAsset, ImagePickerOptions } from "expo-image-picker";
 import { Stack, usePathname, useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,12 +25,14 @@ type ThreadComposerProps = {
   isPreview?: boolean;
   isReply?: boolean;
   threadId?: Id<"messages">;
+  disablePress?: boolean;
 };
 
 const ThreadComposer = ({
   isPreview,
   isReply,
   threadId,
+  disablePress = false,
 }: ThreadComposerProps) => {
   const router = useRouter();
   const [threadContent, setThreadContent] = useState("");
@@ -113,6 +117,7 @@ const ThreadComposer = ({
   };
 
   const pathname = usePathname();
+  // console.log(pathname);
 
   // if (pathname == "/create") {
   //   console.log("CREATE SCREEN!");
@@ -123,7 +128,7 @@ const ThreadComposer = ({
       onPress={() => {
         router.push("/(auth)/(modal)/create");
       }}
-      disabled={pathname === "/create"}
+      disabled={pathname === "/create" || disablePress}
       style={
         isPreview && {
           top: 0,
@@ -260,6 +265,11 @@ const ThreadComposer = ({
 export default ThreadComposer;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    // paddingTop: StatusBar.currentHeight,
+  },
   topRow: {
     flexDirection: "row",
     alignItems: "center",
