@@ -3,6 +3,7 @@ import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
+import { internal } from "./_generated/api";
 
 export const addThreadMessage = mutation({
   args: {
@@ -22,14 +23,72 @@ export const addThreadMessage = mutation({
       retweetCount: 0,
     });
 
+    // If the new thread or messages is a reply to an existing one
     if (args.threadId) {
       const originalThread = await ctx.db.get(args.threadId);
       await ctx.db.patch(args.threadId, {
         commentCount: (originalThread?.commentCount || 0) + 1,
       });
+
+      // If the user comments on a thread, send a push notification
+      if (originalThread?.userId !== user._id) {
+        const user = await ctx.db.get(originalThread?.userId as Id<"users">);
+        const pushToken = user?.pushToken;
+
+        if (!pushToken) {
+          return;
+        }
+
+        await ctx.scheduler.runAfter(5000, internal.push.sendPushNotification, {
+          pushToken: pushToken,
+          threadId: args.threadId,
+          messageTitle: "New comment",
+          messageBody: args.content,
+        });
+      }
     }
 
     return message;
+  },
+});
+
+export const getThreadComments = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUserOrThrow(ctx);
+
+    const comments = await ctx.db
+      .query("messages")
+      .filter((q) => {
+        return q.eq(q.field("threadId"), args.messageId);
+      })
+      .order("desc")
+      .collect();
+
+    const messagesWithCreator = await Promise.all(
+      comments.map(async (comment) => {
+        const creator = await getMessageCreator(ctx, comment.userId);
+        const mediaUrls = await getMediaUrls(ctx, comment.mediaFiles);
+
+        const like = await ctx.db
+          .query("likes")
+          .withIndex("byUserAndThread", (q) => {
+            return q.eq("userId", user._id).eq("threadId", comment._id);
+          })
+          .first();
+
+        return {
+          ...comment,
+          creator,
+          mediaFiles: mediaUrls,
+          isLiked: !!like,
+        };
+      })
+    );
+
+    return messagesWithCreator;
   },
 });
 

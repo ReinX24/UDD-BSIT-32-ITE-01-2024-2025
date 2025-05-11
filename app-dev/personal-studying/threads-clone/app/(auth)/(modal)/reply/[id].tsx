@@ -1,3 +1,4 @@
+import Comments from "@/components/Comments";
 import Thread from "@/components/Thread";
 import ThreadComposer from "@/components/ThreadComposer";
 import { COLORS } from "@/constants/COLORS";
@@ -57,13 +58,11 @@ const Page = () => {
         ) : (
           <ActivityIndicator />
         )}
-        <View style={{ paddingBottom: 200 }}>
-          <ThreadComposer
-            isReply
-            threadId={id as Id<"messages">}
-            disablePress={true}
-          />
-        </View>
+        <ThreadComposer
+          isReply
+          threadId={id as Id<"messages">}
+          disablePress={true}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );

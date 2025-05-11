@@ -1,3 +1,4 @@
+import Comments from "@/components/Comments";
 import Thread from "@/components/Thread";
 import { COLORS } from "@/constants/COLORS";
 import { api } from "@/convex/_generated/api";
@@ -27,7 +28,7 @@ const Page = () => {
   // console.log(thread);
 
   return (
-    <SafeAreaView style={[styles.container]}>
+    <SafeAreaView style={styles.container}>
       <StatusBar hidden />
       <ScrollView>
         {thread ? (
@@ -42,8 +43,9 @@ const Page = () => {
         ) : (
           <ActivityIndicator />
         )}
-        <View style={styles.border} />
+        <Comments messageId={id as Id<"messages">} />
       </ScrollView>
+      <View style={styles.border} />
       <Link href={`/(auth)/(modal)/reply/${id}`} asChild>
         <TouchableOpacity style={styles.replyButton}>
           <Image

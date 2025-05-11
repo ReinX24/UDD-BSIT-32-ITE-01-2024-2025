@@ -28,6 +28,7 @@ const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { usePush } from "@/hooks/usePush";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -77,6 +78,9 @@ const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+
+  usePush();
+
   // const user = useUser();
 
   useEffect(() => {
