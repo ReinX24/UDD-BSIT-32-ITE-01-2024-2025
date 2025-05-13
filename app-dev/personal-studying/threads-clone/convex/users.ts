@@ -6,6 +6,7 @@ import {
   QueryCtx,
 } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
+import { use } from "react";
 
 export const getAllUsers = query({
   args: {},
@@ -103,6 +104,28 @@ export const generateUploadUrl = mutation({
     // Checking if the current user is authenticated or logged in
     await getCurrentUserOrThrow(ctx);
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const searchUsers = query({
+  args: {
+    searchQuery: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const users = await ctx.db
+      .query("users")
+      .withSearchIndex("searchUsers", (q) => {
+        return q.search("username", args.searchQuery);
+      })
+      .collect();
+
+    const usersWithImage = await Promise.all(
+      users.map(async (user) => {
+        return getUserWithImageUrl(ctx, user);
+      })
+    );
+
+    return usersWithImage;
   },
 });
 
