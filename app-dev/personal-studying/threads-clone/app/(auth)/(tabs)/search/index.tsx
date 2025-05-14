@@ -70,11 +70,12 @@ const SearchIndex = () => {
 
       <FlatList
         data={userList}
+        contentInsetAdjustmentBehavior="automatic"
         renderItem={({ item }) => {
           return <ProfileSearchResult user={item as Doc<"users">} />;
         }}
-      ></FlatList>
-      <StatusBar backgroundColor={COLORS.background}></StatusBar>
+      />
+      <StatusBar backgroundColor={COLORS.background} />
     </View>
   );
 };
