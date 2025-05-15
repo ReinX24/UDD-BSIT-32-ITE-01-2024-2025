@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -51,28 +52,49 @@ const SearchIndex = () => {
           },
         }}
       />
+
+      {/* Searchbar */}
       <View style={styles.headerContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          value={search}
-          onChangeText={handleChangeText}
-          autoFocus
-        />
-        {search.length > 0 && (
-          <View style={{ marginLeft: 4 }}>
-            <TouchableOpacity onPress={handleCancel}>
-              <MaterialIcons name="clear" size={24} />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View>
+          <Text style={styles.headerTitle}>Search</Text>
+        </View>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={search}
+            onChangeText={handleChangeText}
+            autoFocus
+          />
+          {search.length > 0 && (
+            <View style={{ marginLeft: 4 }}>
+              <TouchableOpacity onPress={handleCancel}>
+                <MaterialIcons name="clear" size={24} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
 
+      {/* List of users */}
       <FlatList
         data={userList}
         contentInsetAdjustmentBehavior="automatic"
         renderItem={({ item }) => {
           return <ProfileSearchResult user={item as Doc<"users">} />;
+        }}
+        ItemSeparatorComponent={() => {
+          return (
+            <View
+              style={{
+                height: StyleSheet.hairlineWidth,
+                backgroundColor: COLORS.border,
+              }}
+            />
+          );
+        }}
+        ListEmptyComponent={() => {
+          return <Text style={styles.emptyText}>No users found.</Text>;
         }}
       />
       <StatusBar backgroundColor={COLORS.background} />
@@ -88,6 +110,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   headerContainer: {
+    flexDirection: "column",
+  },
+  headerTitle: {
+    textAlign: "center",
+    paddingTop: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
@@ -100,5 +131,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
 });
